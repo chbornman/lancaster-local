@@ -1,4 +1,5 @@
 # Lancaster Community Platform
+<!-- Deployment test: 2025-07-29 -->
 
 A multi-language community platform with news feed and calendar, featuring full RTL support for Arabic and other RTL languages.
 
