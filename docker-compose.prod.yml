@@ -28,9 +28,7 @@ services:
     restart: unless-stopped
 
   backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/caleb/lancaster-local-backend:main
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
@@ -52,9 +50,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/caleb/lancaster-local-frontend:main
     environment:
       VITE_API_URL: /api
       VITE_DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
@@ -84,9 +80,7 @@ services:
 
   # Seed service - runs once to populate initial data
   seed:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/caleb/lancaster-local-backend:main
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
