@@ -25,6 +25,41 @@ services:
       timeout: 5s
       retries: 5
 
+  # Migration service - runs once to setup database
+  migrate:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      DATABASE_URL: postgresql://lancaster:lancaster_pass@db:5432/lancaster_community
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: cargo run --bin migrate
+    restart: "no"
+
+  # Seed service - runs once to populate initial data
+  seed:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      DATABASE_URL: postgresql://lancaster:lancaster_pass@db:5432/lancaster_community
+      REDIS_URL: redis://redis:6379
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY}
+      DEFAULT_LANGUAGE: en
+      SUPPORTED_LANGUAGES: en,es,de,fr,zh,ar,he,fa,ur
+      RTL_LANGUAGES: ar,he,fa,ur
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ./backend:/app
+    command: cargo run --bin seed
+    restart: "no"
+
   backend:
     build: 
       context: ./backend
@@ -41,8 +76,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      db:
-        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     volumes:
