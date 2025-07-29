@@ -1,5 +1,7 @@
 # Lancaster Community Platform
 
+## test
+
 A multi-language community platform with news feed and calendar, featuring full RTL support for Arabic and other RTL languages.
 
 ## Features
@@ -57,6 +59,7 @@ This project uses different configurations for development and production enviro
 ### Development Environment
 
 Uses `docker-compose.yml` for local development:
+
 - Builds services from local source code
 - Exposes database and Redis ports for debugging
 - Uses development credentials
@@ -65,6 +68,7 @@ Uses `docker-compose.yml` for local development:
 ### Production Environment
 
 Uses `docker-compose.prod.yml` for production deployment:
+
 - Uses pre-built images from GitHub Container Registry
 - No ports exposed except web services
 - Secure credentials from environment variables
@@ -147,6 +151,7 @@ docker compose run --rm seed
    - `DOMAIN` - Your domain name
 
 2. Clone repository on production server:
+
    ```bash
    git clone https://github.com/yourusername/lancaster-local.git
    cd lancaster-local
