@@ -5,10 +5,12 @@ WORKDIR /app
 # Copy manifests
 COPY Cargo.toml Cargo.lock ./
 
-# Build dependencies
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release
-RUN rm -rf src
+# Build dependencies (this layer will be cached)
+RUN mkdir -p src/bin && \
+    echo "fn main() {}" > src/main.rs && \
+    echo "fn main() {}" > src/bin/seed.rs && \
+    cargo build --release && \
+    rm -rf src
 
 # Copy source code
 COPY . .
@@ -29,6 +31,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 COPY --from=builder /app/target/release/lancaster-backend /app/lancaster-backend
+COPY --from=builder /app/target/release/seed /app/seed
+COPY --from=builder /app/migrations /app/migrations
+
+# Create non-root user
+RUN useradd -r -s /bin/false appuser && \
+    chown -R appuser:appuser /app
+USER appuser
 
 EXPOSE 3000
 

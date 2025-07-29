@@ -1,0 +1,110 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY}
+      DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+      SUPPORTED_LANGUAGES: ${SUPPORTED_LANGUAGES}
+      RTL_LANGUAGES: ${RTL_LANGUAGES}
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    networks:
+      - internal
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_API_URL: /api
+      VITE_DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+      VITE_RTL_LANGUAGES: ${RTL_LANGUAGES}
+    ports:
+      - "3001:80"
+    networks:
+      - internal
+    restart: unless-stopped
+
+  # Migration service - runs once to setup database
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./backend/migrations:/migrations
+    networks:
+      - internal
+    depends_on:
+      db:
+        condition: service_healthy
+    command: [
+      "-path", "/migrations",
+      "-database", "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable",
+      "up"
+    ]
+    restart: "no"
+
+  # Seed service - runs once to populate initial data
+  seed:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY}
+      DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+      SUPPORTED_LANGUAGES: ${SUPPORTED_LANGUAGES}
+      RTL_LANGUAGES: ${RTL_LANGUAGES}
+    networks:
+      - internal
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: "/app/seed"
+    restart: "no"
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+    driver: bridge
