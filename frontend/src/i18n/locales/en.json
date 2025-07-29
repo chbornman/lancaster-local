@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "home": "Home",
+    "news": "News Feed",
+    "calendar": "Calendar",
+    "submit": "Submit",
+    "admin": "Admin"
+  },
+  "language": {
+    "select": "Select Language",
+    "translated": "Translated from {{language}}",
+    "original": "Original ({{language}})"
+  },
+  "posts": {
+    "title": "Community News",
+    "submit": "Submit Post",
+    "author_name": "Your Name",
+    "author_email": "Your Email (optional)",
+    "post_title": "Post Title",
+    "content": "Content",
+    "link_url": "Link URL (optional)",
+    "image_url": "Image URL (optional)",
+    "type": "Type",
+    "types": {
+      "text": "Text",
+      "link": "Link",
+      "announcement": "Announcement"
+    },
+    "submit_success": "Post submitted successfully! It will appear after moderation.",
+    "no_posts": "No posts yet. Be the first to share!"
+  },
+  "events": {
+    "title": "Community Calendar",
+    "submit": "Submit Event",
+    "organizer_name": "Organizer Name",
+    "organizer_email": "Organizer Email",
+    "event_title": "Event Title",
+    "description": "Description",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "category": "Category",
+    "categories": {
+      "community": "Community",
+      "education": "Education",
+      "social": "Social",
+      "sports": "Sports",
+      "cultural": "Cultural",
+      "religious": "Religious"
+    },
+    "is_free": "Free Event",
+    "ticket_price": "Ticket Price",
+    "ticket_url": "Ticket URL",
+    "get_tickets": "Get Tickets",
+    "organized_by": "Organized by",
+    "all_categories": "All Categories",
+    "calendar_view": "Calendar",
+    "list_view": "List",
+    "all_categories": "All Categories",
+    "organizer_email": "Organizer Email",
+    "get_tickets": "Get Tickets",
+    "organized_by": "Organized by",
+    "events_on": "Events on",
+    "submit_success": "Event submitted successfully! It will appear after moderation.",
+    "no_events": "No events scheduled"
+  },
+  "admin": {
+    "login": "Admin Login",
+    "password": "Password",
+    "login_button": "Login",
+    "logout": "Logout",
+    "dashboard": "Admin Dashboard",
+    "posts": "Manage Posts",
+    "events": "Manage Events",
+    "publish": "Publish",
+    "unpublished": "Unpublished",
+    "published": "Published"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "retry": "Retry"
+  }
+}

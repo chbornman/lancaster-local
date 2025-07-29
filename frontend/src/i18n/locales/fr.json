@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "news": "Actualités",
+    "calendar": "Calendrier",
+    "submit": "Soumettre",
+    "admin": "Admin"
+  },
+  "language": {
+    "select": "Sélectionner la langue",
+    "translated": "Traduit de {{language}}"
+  },
+  "posts": {
+    "title": "Actualités de la Communauté",
+    "submit": "Soumettre une Publication"
+  },
+  "events": {
+    "title": "Calendrier Communautaire",
+    "submit": "Soumettre un Événement"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "submit": "Soumettre"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "news": "Nachrichten",
+    "calendar": "Kalender",
+    "submit": "Einreichen",
+    "admin": "Admin"
+  },
+  "language": {
+    "select": "Sprache auswählen",
+    "translated": "Übersetzt von {{language}}"
+  },
+  "posts": {
+    "title": "Community-Nachrichten",
+    "submit": "Beitrag einreichen"
+  },
+  "events": {
+    "title": "Community-Kalender",
+    "submit": "Veranstaltung einreichen"
+  },
+  "common": {
+    "loading": "Laden...",
+    "submit": "Einreichen"
+  }
+}

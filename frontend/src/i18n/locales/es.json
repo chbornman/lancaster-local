@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "news": "Noticias",
+    "calendar": "Calendario",
+    "submit": "Enviar",
+    "admin": "Admin"
+  },
+  "language": {
+    "select": "Seleccionar idioma",
+    "translated": "Traducido de {{language}}"
+  },
+  "posts": {
+    "title": "Noticias de la Comunidad",
+    "submit": "Enviar Publicación",
+    "author_name": "Tu Nombre",
+    "post_title": "Título",
+    "content": "Contenido"
+  },
+  "events": {
+    "title": "Calendario Comunitario",
+    "submit": "Enviar Evento"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "submit": "Enviar"
+  }
+}

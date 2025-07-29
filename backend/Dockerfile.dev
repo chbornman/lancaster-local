@@ -1,0 +1,17 @@
+FROM rust:latest
+
+WORKDIR /app
+
+# Install cargo-watch for auto-reloading
+RUN cargo install cargo-watch
+
+# Copy dependency files
+COPY Cargo.toml Cargo.lock ./
+
+# Build dependencies (this layer will be cached)
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+RUN cargo build
+RUN rm -rf src
+
+# The source code will be mounted as a volume
+CMD ["cargo", "watch", "-x", "run"]

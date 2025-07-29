@@ -1,0 +1,161 @@
+/* Mobile-specific enhancements */
+
+/* Safe area insets for modern phones */
+@supports (padding: max(0px)) {
+  .container {
+    padding-left: max(var(--space-3), env(safe-area-inset-left));
+    padding-right: max(var(--space-3), env(safe-area-inset-right));
+  }
+  
+  footer {
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  }
+}
+
+/* Improve tap targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  /* Make all interactive elements at least 44x44px */
+  button, .btn, a, input, select, textarea {
+    min-height: 44px;
+  }
+  
+  /* Add extra padding to small buttons */
+  .btn-sm {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  /* Ensure clickable areas in lists */
+  .card {
+    position: relative;
+  }
+  
+  .card > a:first-child::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+/* Mobile-optimized forms */
+@media (max-width: 640px) {
+  /* Stack form labels on mobile */
+  label {
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+  }
+  
+  /* Full-width buttons on mobile */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .btn-group .btn {
+    width: 100%;
+  }
+  
+  /* Improve select dropdowns */
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+}
+
+/* Swipe hints for scrollable areas */
+.overflow-x-auto {
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.overflow-x-auto::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.8));
+  pointer-events: none;
+}
+
+[dir="rtl"] .overflow-x-auto::after {
+  right: auto;
+  left: 0;
+  background: linear-gradient(to left, transparent, rgba(255,255,255,0.8));
+}
+
+/* Mobile-friendly modals */
+@media (max-width: 640px) {
+  .modal {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 90vh;
+    border-radius: 1rem 1rem 0 0;
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Improve readability on small screens */
+@media (max-width: 640px) {
+  /* Increase line height for better readability */
+  p, .text-sm {
+    line-height: 1.6;
+  }
+  
+  [dir="rtl"] p,
+  [dir="rtl"] .text-sm {
+    line-height: 1.8;
+  }
+  
+  /* Better spacing between sections */
+  section + section {
+    margin-top: var(--space-8);
+  }
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  header {
+    position: relative;
+  }
+  
+  .mobile-menu {
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+}

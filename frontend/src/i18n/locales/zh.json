@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "首页",
+    "news": "新闻动态",
+    "calendar": "日历",
+    "submit": "提交",
+    "admin": "管理"
+  },
+  "language": {
+    "select": "选择语言",
+    "translated": "翻译自 {{language}}"
+  },
+  "posts": {
+    "title": "社区新闻",
+    "submit": "发布文章"
+  },
+  "events": {
+    "title": "社区日历",
+    "submit": "发布活动"
+  },
+  "common": {
+    "loading": "加载中...",
+    "submit": "提交"
+  }
+}

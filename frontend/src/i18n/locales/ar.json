@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "news": "الأخبار",
+    "calendar": "التقويم",
+    "submit": "إرسال",
+    "admin": "الإدارة"
+  },
+  "language": {
+    "select": "اختر اللغة",
+    "translated": "مترجم من {{language}}"
+  },
+  "posts": {
+    "title": "أخبار المجتمع",
+    "submit": "إرسال منشور",
+    "author_name": "اسمك",
+    "post_title": "عنوان المنشور",
+    "content": "المحتوى",
+    "link_url": "رابط URL (اختياري)",
+    "image_url": "رابط الصورة (اختياري)",
+    "type": "النوع",
+    "types": {
+      "text": "نص",
+      "link": "رابط",
+      "announcement": "إعلان"
+    },
+    "submit_success": "تم إرسال المنشور بنجاح! سيظهر بعد المراجعة.",
+    "no_posts": "لا توجد منشورات بعد. كن أول من يشارك!"
+  },
+  "events": {
+    "title": "تقويم المجتمع",
+    "submit": "إرسال حدث",
+    "organizer_name": "اسم المنظم",
+    "organizer_email": "بريد المنظم",
+    "event_title": "عنوان الحدث",
+    "description": "الوصف",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "location": "الموقع",
+    "category": "الفئة",
+    "categories": {
+      "community": "مجتمعي",
+      "education": "تعليمي",
+      "social": "اجتماعي",
+      "sports": "رياضي",
+      "cultural": "ثقافي",
+      "religious": "ديني"
+    },
+    "is_free": "حدث مجاني",
+    "ticket_price": "سعر التذكرة",
+    "ticket_url": "رابط التذكرة",
+    "get_tickets": "احصل على التذاكر",
+    "organized_by": "ينظمه",
+    "all_categories": "جميع الفئات",
+    "calendar_view": "عرض التقويم",
+    "list_view": "عرض القائمة",
+    "events_on": "الأحداث في",
+    "submit_success": "تم إرسال الحدث بنجاح! سيظهر بعد المراجعة.",
+    "no_events": "لا توجد أحداث مجدولة"
+  },
+  "admin": {
+    "login": "دخول الإدارة",
+    "password": "كلمة المرور",
+    "login_button": "دخول",
+    "logout": "خروج",
+    "dashboard": "لوحة التحكم",
+    "posts": "إدارة المنشورات",
+    "events": "إدارة الأحداث",
+    "publish": "نشر",
+    "unpublished": "غير منشور",
+    "published": "منشور"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "retry": "إعادة المحاولة"
+  }
+}
