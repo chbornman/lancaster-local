@@ -1,5 +1,4 @@
 # Lancaster Community Platform
-<!-- Deployment test: 2025-07-29 -->
 
 A multi-language community platform with news feed and calendar, featuring full RTL support for Arabic and other RTL languages.
 
@@ -40,6 +39,7 @@ A multi-language community platform with news feed and calendar, featuring full 
 ### Environment Variables
 
 See `.env` file for required configuration:
+
 - `GOOGLE_TRANSLATE_API_KEY` - Your Google Translate API key
 - `ADMIN_PASSWORD` - Admin panel password
 - Database and Redis connection settings
@@ -69,12 +69,14 @@ make restart    # Restart all services
 ## RTL Support
 
 The platform fully supports RTL languages including:
+
 - Arabic (العربية)
 - Hebrew (עברית)
 - Persian (فارسی)
 - Urdu (اردو)
 
 RTL features include:
+
 - Automatic text direction detection
 - Bidirectional layout switching
 - Proper typography and font rendering
