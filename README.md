@@ -50,7 +50,27 @@ Production deployment is automated via GitHub Actions. When you push to the `mai
 
 See [DEPLOY.md](DEPLOY.md) for detailed production setup instructions.
 
-## Development
+## Development vs Production
+
+This project uses different configurations for development and production environments:
+
+### Development Environment
+
+Uses `docker-compose.yml` for local development:
+- Builds services from local source code
+- Exposes database and Redis ports for debugging
+- Uses development credentials
+- Hot-reloading enabled for faster development
+
+### Production Environment
+
+Uses `docker-compose.prod.yml` for production deployment:
+- Uses pre-built images from GitHub Container Registry
+- No ports exposed except web services
+- Secure credentials from environment variables
+- Automated deployment via GitHub Actions
+
+## Development Setup
 
 ### Prerequisites
 
@@ -62,23 +82,129 @@ See [DEPLOY.md](DEPLOY.md) for detailed production setup instructions.
 
 Copy `.env.example` to `.env` and configure:
 
-- `GOOGLE_TRANSLATE_API_KEY` - Your Google Translate API key
-- `ADMIN_PASSWORD` - Admin panel password
-- `POSTGRES_USER/PASSWORD/DB` - Database credentials (defaults provided for dev)
-- Other settings have sensible defaults for development
+```bash
+# Google Translate API
+GOOGLE_TRANSLATE_API_KEY=your-api-key-here
 
-**Note**: The development `docker-compose.yml` uses these `.env` values. Production uses GitHub Secrets.
+# Admin credentials
+ADMIN_PASSWORD=your-secure-password
 
-### Available Commands
+# Database (for production)
+POSTGRES_USER=your-db-user
+POSTGRES_PASSWORD=your-db-password
+POSTGRES_DB=your-db-name
+
+# Application settings
+DEFAULT_LANGUAGE=en
+SUPPORTED_LANGUAGES=en,es,de,fr,zh,ar,he,fa,ur
+RTL_LANGUAGES=ar,he,fa,ur
+
+# Production domain
+DOMAIN=your-domain.com
+```
+
+**Note**: The development `docker-compose.yml` uses default credentials for database. Production uses the values from `.env` file.
+
+### Development Commands
 
 ```bash
-make up         # Start all services
-make down       # Stop all services
-make build      # Build all services
-make logs       # View all logs
-make clean      # Clean up containers and volumes
-make restart    # Restart all services
+# Start development environment
+make up         # or: docker compose up -d
+
+# View logs
+make logs       # or: docker compose logs -f
+
+# Stop services
+make down       # or: docker compose down
+
+# Rebuild after code changes
+make build      # or: docker compose build
+
+# Clean everything (including volumes)
+make clean      # or: docker compose down -v
+
+# Run migrations (development)
+docker compose run --rm migrate
+
+# Run seed data (development - first time only)
+docker compose run --rm seed
 ```
+
+## Production Deployment
+
+### Initial Setup
+
+1. Set up GitHub Secrets for deployment:
+   - `VPS_HOST` - Your server IP/hostname
+   - `VPS_USERNAME` - SSH username (e.g., deployer)
+   - `VPS_SSH_KEY` - Private SSH key for authentication
+   - `VPS_APP_PATH` - Path to application (e.g., /home/deployer/lancaster-local)
+   - `GOOGLE_TRANSLATE_API_KEY` - Google Translate API key
+   - `ADMIN_PASSWORD` - Admin panel password
+   - `POSTGRES_USER` - Database username
+   - `POSTGRES_PASSWORD` - Database password
+   - `POSTGRES_DB` - Database name
+   - `DOMAIN` - Your domain name
+
+2. Clone repository on production server:
+   ```bash
+   git clone https://github.com/yourusername/lancaster-local.git
+   cd lancaster-local
+   ```
+
+3. Push to main branch to trigger deployment
+
+4. After first deployment, run seed data manually:
+   ```bash
+   docker compose -f docker-compose.prod.yml run --rm seed
+   ```
+
+### Production Commands
+
+```bash
+# View production logs
+docker compose -f docker-compose.prod.yml logs -f
+
+# Stop production services
+docker compose -f docker-compose.prod.yml down
+
+# Start production services
+docker compose -f docker-compose.prod.yml up -d
+
+# Run migrations manually (if needed)
+docker compose -f docker-compose.prod.yml run --rm migrate
+
+# Run seed data (first time only)
+docker compose -f docker-compose.prod.yml run --rm seed
+
+# View database tables
+source .env && docker compose -f docker-compose.prod.yml exec db psql -U $POSTGRES_USER -d $POSTGRES_DB
+
+# Clean and restart fresh
+docker compose -f docker-compose.prod.yml down -v
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml run --rm migrate
+docker compose -f docker-compose.prod.yml run --rm seed
+```
+
+### Deployment Process
+
+1. Code changes pushed to `main` branch trigger GitHub Actions
+2. GitHub Actions builds new Docker images and pushes to registry
+3. Deployment script SSHs to production server
+4. Updates `.env` file with secrets
+5. Pulls latest images
+6. Restarts services with `docker-compose.prod.yml`
+7. Automatically runs migrations
+8. Old images are cleaned up
+
+### Important Notes
+
+- Migrations run automatically on each deployment
+- Seed data must be run manually (only needed once)
+- Production uses `.env` file (not `.env.production`)
+- All sensitive data comes from GitHub Secrets
+- Database volume persists between deployments
 
 ### API Endpoints
 

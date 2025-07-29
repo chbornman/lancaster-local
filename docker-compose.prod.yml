@@ -51,8 +51,6 @@ services:
 
   frontend:
     image: ghcr.io/chbornman/lancaster-local-frontend:main
-    env_file:
-      - .env.production
     ports:
       - "3011:80"
     networks:
@@ -72,7 +70,8 @@ services:
     command: ["/app/migrate"]
     restart: "no"
 
-  # Seed service - runs once to populate initial data
+  # Seed service - for initial setup only, run manually with:
+  # docker compose -f docker-compose.prod.yml run --rm seed
   seed:
     image: ghcr.io/chbornman/lancaster-local-backend:main
     environment:
