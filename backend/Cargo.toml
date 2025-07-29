@@ -8,6 +8,10 @@ default-run = "lancaster-backend"
 name = "seed"
 path = "src/bin/seed.rs"
 
+[[bin]]
+name = "migrate"
+path = "src/bin/migrate.rs"
+
 
 [dependencies]
 axum = "0.7"

@@ -9,6 +9,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN mkdir -p src/bin && \
     echo "fn main() {}" > src/main.rs && \
     echo "fn main() {}" > src/bin/seed.rs && \
+    echo "fn main() {}" > src/bin/migrate.rs && \
     cargo build --release && \
     rm -rf src
 
@@ -32,6 +33,7 @@ WORKDIR /app
 
 COPY --from=builder /app/target/release/lancaster-backend /app/lancaster-backend
 COPY --from=builder /app/target/release/seed /app/seed
+COPY --from=builder /app/target/release/migrate /app/migrate
 COPY --from=builder /app/migrations /app/migrations
 
 # Create non-root user
