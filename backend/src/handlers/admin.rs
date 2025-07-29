@@ -1,5 +1,5 @@
 use axum::{
-    extract::State,
+    extract::{Path, State},
     http::{HeaderMap, StatusCode},
     Json,
 };
@@ -103,6 +103,58 @@ pub async fn get_admin_events(
 
     Ok(Json(json!({
         "events": events
+    })))
+}
+
+pub async fn delete_post(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+    Path(id): Path<i32>,
+) -> Result<Json<serde_json::Value>, StatusCode> {
+    // Verify admin session
+    verify_admin_session(&state, &headers).await?;
+
+    let result = sqlx::query("DELETE FROM posts WHERE id = $1")
+        .bind(id)
+        .execute(&state.pool)
+        .await
+        .map_err(|e| {
+            tracing::error!("Failed to delete post: {:?}", e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+
+    if result.rows_affected() == 0 {
+        return Err(StatusCode::NOT_FOUND);
+    }
+
+    Ok(Json(json!({
+        "message": "Post deleted successfully"
+    })))
+}
+
+pub async fn delete_event(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+    Path(id): Path<i32>,
+) -> Result<Json<serde_json::Value>, StatusCode> {
+    // Verify admin session
+    verify_admin_session(&state, &headers).await?;
+
+    let result = sqlx::query("DELETE FROM events WHERE id = $1")
+        .bind(id)
+        .execute(&state.pool)
+        .await
+        .map_err(|e| {
+            tracing::error!("Failed to delete event: {:?}", e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+
+    if result.rows_affected() == 0 {
+        return Err(StatusCode::NOT_FOUND);
+    }
+
+    Ok(Json(json!({
+        "message": "Event deleted successfully"
     })))
 }
 

@@ -65,6 +65,34 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleDeletePost = async (postId: number) => {
+    if (!confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+    
+    try {
+      await endpoints.deletePost(postId);
+      await fetchData(); // Refresh data
+    } catch (err) {
+      console.error('Failed to delete post:', err);
+      alert('Failed to delete post');
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: number) => {
+    if (!confirm('Are you sure you want to delete this event?')) {
+      return;
+    }
+    
+    try {
+      await endpoints.deleteEvent(eventId);
+      await fetchData(); // Refresh data
+    } catch (err) {
+      console.error('Failed to delete event:', err);
+      alert('Failed to delete event');
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await endpoints.adminLogout();
@@ -78,7 +106,7 @@ const AdminDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -87,7 +115,7 @@ const AdminDashboard: React.FC = () => {
     return (
       <div className="text-center py-8">
         <p className="text-red-600 mb-4">{t('common.error')}: {error}</p>
-        <button onClick={fetchData} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium">
+        <button onClick={fetchData} className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium shadow-sm hover:shadow-md">
           {t('common.retry')}
         </button>
       </div>
@@ -103,7 +131,7 @@ const AdminDashboard: React.FC = () => {
     <div className="max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
-        <button onClick={handleLogout} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors font-medium">
+        <button onClick={handleLogout} className="btn btn-secondary btn-md">
           {t('admin.logout')}
         </button>
       </div>
@@ -114,8 +142,8 @@ const AdminDashboard: React.FC = () => {
           onClick={() => setActiveTab('posts')}
           className={`pb-2 px-4 font-medium transition-colors ${
             activeTab === 'posts' 
-              ? 'text-blue-600 border-b-2 border-blue-600' 
-              : 'text-gray-600 hover:text-gray-800'
+              ? 'text-primary-600 border-b-2 border-primary-600' 
+              : 'text-neutral-600 hover:text-neutral-800'
           }`}
         >
           {t('admin.posts')} ({unpublishedPosts.length} unpublished)
@@ -124,8 +152,8 @@ const AdminDashboard: React.FC = () => {
           onClick={() => setActiveTab('events')}
           className={`pb-2 px-4 font-medium transition-colors ${
             activeTab === 'events' 
-              ? 'text-blue-600 border-b-2 border-blue-600' 
-              : 'text-gray-600 hover:text-gray-800'
+              ? 'text-primary-600 border-b-2 border-primary-600' 
+              : 'text-neutral-600 hover:text-neutral-800'
           }`}
         >
           {t('admin.events')} ({unpublishedEvents.length} unpublished)
@@ -140,29 +168,37 @@ const AdminDashboard: React.FC = () => {
               {t('admin.unpublished')} {t('admin.posts')}
             </h2>
             {unpublishedPosts.length === 0 ? (
-              <p className="text-gray-600">No unpublished posts</p>
+              <p className="text-neutral-600">No unpublished posts</p>
             ) : (
               <div className="space-y-4">
                 {unpublishedPosts.map(post => (
-                  <div key={post.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div key={post.id} className="card rounded-lg shadow-sm">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold">{post.title}</h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-neutral-600">
                           By: {post.author_name} | 
                           Language: {post.original_language} |
                           Direction: {post.text_direction}
                         </p>
                       </div>
-                      <button
-                        onClick={() => handlePublishPost(post.id)}
-                        className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
-                      >
-                        {t('admin.publish')}
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handlePublishPost(post.id)}
+                          className="btn btn-primary btn-sm"
+                        >
+                          {t('admin.publish')}
+                        </button>
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="btn btn-danger btn-sm"
+                        >
+                          {t('admin.delete')}
+                        </button>
+                      </div>
                     </div>
                     {post.content && (
-                      <p className="text-gray-700 mt-2">{post.content}</p>
+                      <p className="text-neutral-700 mt-2">{post.content}</p>
                     )}
                   </div>
                 ))}
@@ -175,15 +211,25 @@ const AdminDashboard: React.FC = () => {
               {t('admin.published')} {t('admin.posts')}
             </h2>
             {publishedPosts.length === 0 ? (
-              <p className="text-gray-600">No published posts</p>
+              <p className="text-neutral-600">No published posts</p>
             ) : (
               <div className="space-y-4">
                 {publishedPosts.map(post => (
-                  <div key={post.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 opacity-75">
-                    <h3 className="font-semibold">{post.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      By: {post.author_name} | Published
-                    </p>
+                  <div key={post.id} className="card rounded-lg shadow-sm opacity-75">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold">{post.title}</h3>
+                        <p className="text-sm text-neutral-600">
+                          By: {post.author_name} | Published
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDeletePost(post.id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        {t('admin.delete')}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -197,29 +243,37 @@ const AdminDashboard: React.FC = () => {
               {t('admin.unpublished')} {t('admin.events')}
             </h2>
             {unpublishedEvents.length === 0 ? (
-              <p className="text-gray-600">No unpublished events</p>
+              <p className="text-neutral-600">No unpublished events</p>
             ) : (
               <div className="space-y-4">
                 {unpublishedEvents.map(event => (
-                  <div key={event.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div key={event.id} className="card rounded-lg shadow-sm">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold">{event.title}</h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-neutral-600">
                           Date: {event.event_date} | 
                           Organizer: {event.organizer_name} |
                           Language: {event.original_language}
                         </p>
                       </div>
-                      <button
-                        onClick={() => handlePublishEvent(event.id)}
-                        className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
-                      >
-                        {t('admin.publish')}
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handlePublishEvent(event.id)}
+                          className="btn btn-primary btn-sm"
+                        >
+                          {t('admin.publish')}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEvent(event.id)}
+                          className="btn btn-danger btn-sm"
+                        >
+                          {t('admin.delete')}
+                        </button>
+                      </div>
                     </div>
                     {event.description && (
-                      <p className="text-gray-700 mt-2">{event.description}</p>
+                      <p className="text-neutral-700 mt-2">{event.description}</p>
                     )}
                   </div>
                 ))}
@@ -232,15 +286,25 @@ const AdminDashboard: React.FC = () => {
               {t('admin.published')} {t('admin.events')}
             </h2>
             {publishedEvents.length === 0 ? (
-              <p className="text-gray-600">No published events</p>
+              <p className="text-neutral-600">No published events</p>
             ) : (
               <div className="space-y-4">
                 {publishedEvents.map(event => (
-                  <div key={event.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 opacity-75">
-                    <h3 className="font-semibold">{event.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      Date: {event.event_date} | Published
-                    </p>
+                  <div key={event.id} className="card rounded-lg shadow-sm opacity-75">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold">{event.title}</h3>
+                        <p className="text-sm text-neutral-600">
+                          Date: {event.event_date} | Published
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteEvent(event.id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        {t('admin.delete')}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

@@ -19,7 +19,8 @@
   },
   "events": {
     "title": "Calendario Comunitario",
-    "submit": "Enviar Evento"
+    "submit": "Enviar Evento",
+    "events_on": "Eventos del"
   },
   "common": {
     "loading": "Cargando...",

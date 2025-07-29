@@ -17,54 +17,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pool = PgPoolOptions::new()
         .max_connections(1)
         .connect(&database_url)
-        .await
-        .map_err(|e| {
-            eprintln!("❌ Failed to connect to database: {}", e);
-            e
-        })?;
+        .await?;
     
     println!("✅ Database connection established");
     
     // Run migrations
     println!("📦 Running migrations from ./migrations directory...");
     
-    let migrator = sqlx::migrate!("./migrations");
-    let migrations = migrator.iter().collect::<Vec<_>>();
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await?;
     
-    println!("📋 Found {} migration(s) to check", migrations.len());
+    println!("✅ All migrations completed successfully!");
     
-    for migration in &migrations {
-        println!("  - {} (v{}): {}", 
-            migration.description, 
-            migration.version,
-            if migration.migration_type.is_up() { "UP" } else { "DOWN" }
-        );
-    }
+    // Log final state
+    let applied: Vec<(i64, String, chrono::DateTime<chrono::Utc>)> = sqlx::query_as(
+        "SELECT version, description, installed_on FROM _sqlx_migrations ORDER BY version"
+    )
+    .fetch_all(&pool)
+    .await?;
     
-    match migrator.run(&pool).await {
-        Ok(_) => {
-            println!("✅ All migrations completed successfully!");
-            
-            // Log final state
-            let applied: Vec<(i64, String, i64)> = sqlx::query_as(
-                "SELECT version, description, installed_on FROM _sqlx_migrations ORDER BY version"
-            )
-            .fetch_all(&pool)
-            .await?;
-            
-            println!("\n📊 Migration Status:");
-            println!("  Total migrations applied: {}", applied.len());
-            
-            if !applied.is_empty() {
-                println!("\n  Applied migrations:");
-                for (version, description, _) in applied {
-                    println!("    ✓ v{}: {}", version, description);
-                }
-            }
-        }
-        Err(e) => {
-            eprintln!("❌ Migration failed: {}", e);
-            return Err(Box::new(e));
+    println!("\n📊 Migration Status:");
+    println!("  Total migrations applied: {}", applied.len());
+    
+    if !applied.is_empty() {
+        println!("\n  Applied migrations:");
+        for (version, description, _) in applied {
+            println!("    ✓ v{}: {}", version, description);
         }
     }
     

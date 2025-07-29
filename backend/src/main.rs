@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post},
+    routing::{get, post, delete},
     Router,
 };
 use sqlx::postgres::PgPoolOptions;
@@ -74,6 +74,8 @@ async fn main() {
         .route("/api/admin/logout", post(handlers::admin_logout))
         .route("/api/admin/posts", get(handlers::get_admin_posts))
         .route("/api/admin/events", get(handlers::get_admin_events))
+        .route("/api/admin/posts/:id", delete(handlers::delete_post))
+        .route("/api/admin/events/:id", delete(handlers::delete_event))
         
         .layer(
             CorsLayer::new()

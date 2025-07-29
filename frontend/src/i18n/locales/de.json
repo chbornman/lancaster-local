@@ -16,7 +16,8 @@
   },
   "events": {
     "title": "Community-Kalender",
-    "submit": "Veranstaltung einreichen"
+    "submit": "Veranstaltung einreichen",
+    "events_on": "Veranstaltungen am"
   },
   "common": {
     "loading": "Laden...",

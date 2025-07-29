@@ -91,10 +91,10 @@ const SubmitEvent: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">{t('events.submit')}</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 pb-4 border-b-2 border-gray-200" style={{ fontFamily: 'var(--font-serif)' }}>{t('events.submit')}</h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded mb-4 text-sm sm:text-base">
+        <div className="bg-red-50 border border-red-600 text-red-700 px-3 py-2 sm:px-4 sm:py-3 mb-4 text-sm sm:text-base font-medium rounded-lg">
           {error}
         </div>
       )}
@@ -111,7 +111,7 @@ const SubmitEvent: React.FC = () => {
               value={formData.organizer_name}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
               dir="auto"
             />
           </div>
@@ -125,7 +125,7 @@ const SubmitEvent: React.FC = () => {
               name="organizer_email"
               value={formData.organizer_email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
               dir="ltr"
             />
           </div>
@@ -141,7 +141,7 @@ const SubmitEvent: React.FC = () => {
             value={formData.title}
             onChange={handleInputChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
             dir={textDirection}
             style={{
               fontFamily: textDirection === 'rtl' ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'Inter, -apple-system, sans-serif',
@@ -159,7 +159,7 @@ const SubmitEvent: React.FC = () => {
             value={formData.description}
             onChange={handleInputChange}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
             dir={textDirection}
             style={{
               fontFamily: textDirection === 'rtl' ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'Inter, -apple-system, sans-serif',
@@ -180,7 +180,7 @@ const SubmitEvent: React.FC = () => {
               value={formData.event_date}
               onChange={handleInputChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
               min={new Date().toISOString().split('T')[0]}
             />
           </div>
@@ -194,7 +194,7 @@ const SubmitEvent: React.FC = () => {
               name="event_time"
               value={formData.event_time}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
             />
           </div>
         </div>
@@ -208,7 +208,7 @@ const SubmitEvent: React.FC = () => {
             name="location"
             value={formData.location}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
             dir="auto"
           />
         </div>
@@ -221,7 +221,7 @@ const SubmitEvent: React.FC = () => {
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
           >
             <option value="community">{t('events.categories.community')}</option>
             <option value="education">{t('events.categories.education')}</option>
@@ -239,7 +239,7 @@ const SubmitEvent: React.FC = () => {
               name="is_free"
               checked={formData.is_free}
               onChange={handleInputChange}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-600"
             />
             <span>{t('events.is_free')}</span>
           </label>
@@ -257,7 +257,7 @@ const SubmitEvent: React.FC = () => {
                   onChange={handleInputChange}
                   step="0.01"
                   min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
                 />
               </div>
 
@@ -270,7 +270,7 @@ const SubmitEvent: React.FC = () => {
                   name="ticket_url"
                   value={formData.ticket_url}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
                   dir="ltr"
                 />
               </div>
@@ -282,14 +282,14 @@ const SubmitEvent: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex-1 order-2 sm:order-1"
+            className="btn btn-primary flex-1 order-2 sm:order-1"
           >
             {loading ? t('common.loading') : t('common.submit')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/calendar')}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors font-medium order-1 sm:order-2"
+            className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium order-1 sm:order-2"
           >
             {t('common.cancel')}
           </button>

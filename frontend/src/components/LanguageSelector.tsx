@@ -51,7 +51,7 @@ const LanguageSelector: React.FC = () => {
     <div className="language-selector relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-[#1A1A1A] bg-white border border-[#1A1A1A] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
+        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-neutral-800 bg-white border border-neutral-800 rounded-lg hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
         aria-label={t('language.select')}
         style={{ fontFamily: 'var(--font-sans)' }}
       >
@@ -63,21 +63,21 @@ const LanguageSelector: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 end-0 w-48 bg-white border border-[#1A1A1A] shadow-lg z-50">
+        <div className="absolute top-full mt-1 end-0 w-32 bg-white border border-neutral-800 rounded-lg shadow-lg z-50">
           {languages.map((lang) => (
             <button
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
-              className={`block w-full px-4 py-2 text-sm text-start hover:bg-gray-50 ${
-                lang.code === i18n.language ? 'bg-[#8B4513]/10 text-[#8B4513] font-medium' : 'text-[#1A1A1A]'
-              }`}
+              className={`block w-full px-3 py-2 text-sm text-center hover:bg-neutral-50 ${
+                lang.code === i18n.language ? 'bg-primary-100 text-primary-700 font-medium' : 'text-neutral-800'
+              } ${languages.indexOf(lang) === 0 ? 'rounded-t-lg' : ''} ${languages.indexOf(lang) === languages.length - 1 ? 'rounded-b-lg' : ''}`}
               style={{
                 fontFamily: lang.isRtl ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'var(--font-sans)',
                 direction: lang.isRtl ? 'rtl' : 'ltr'
               }}
             >
               <div>{lang.nativeName}</div>
-              <div className="text-xs text-[#4A4A4A]">{lang.name}</div>
+              <div className="text-xs text-neutral-600">{lang.name}</div>
             </button>
           ))}
         </div>

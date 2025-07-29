@@ -16,7 +16,8 @@
   },
   "events": {
     "title": "社区日历",
-    "submit": "发布活动"
+    "submit": "发布活动",
+    "events_on": "活动日期"
   },
   "common": {
     "loading": "加载中...",

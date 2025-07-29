@@ -22,21 +22,21 @@ const NewspaperLogo: React.FC<NewspaperLogoProps> = ({ className = '', size = 'm
       {/* Wind swoosh lines */}
       <path
         d="M5 20 Q15 18, 25 20 T45 20"
-        stroke="#8B4513"
+        stroke="#16a34a"
         strokeWidth="1.5"
         opacity="0.3"
         strokeLinecap="round"
       />
       <path
         d="M3 26 Q13 24, 23 26 T43 26"
-        stroke="#8B4513"
+        stroke="#16a34a"
         strokeWidth="1.5"
         opacity="0.5"
         strokeLinecap="round"
       />
       <path
         d="M7 32 Q17 30, 27 32 T47 32"
-        stroke="#8B4513"
+        stroke="#16a34a"
         strokeWidth="1.5"
         opacity="0.3"
         strokeLinecap="round"
@@ -75,14 +75,14 @@ const NewspaperLogo: React.FC<NewspaperLogoProps> = ({ className = '', size = 'm
       {/* Additional wind effect */}
       <path
         d="M48 24 Q52 23, 56 24"
-        stroke="#8B4513"
+        stroke="#16a34a"
         strokeWidth="1.5"
         opacity="0.4"
         strokeLinecap="round"
       />
       <path
         d="M50 28 Q54 27, 58 28"
-        stroke="#8B4513"
+        stroke="#16a34a"
         strokeWidth="1.5"
         opacity="0.3"
         strokeLinecap="round"

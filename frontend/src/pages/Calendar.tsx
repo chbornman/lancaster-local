@@ -88,13 +88,14 @@ const Calendar: React.FC = () => {
       ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     return (
-      <div className="bg-white shadow-sm border-2 border-[#1A1A1A] p-2 sm:p-4 overflow-x-auto">
+      <div className="card p-2 sm:p-4 overflow-x-auto relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-600 to-primary-500"></div>
         <div className="min-w-[280px]">
           <div className="grid grid-cols-7 gap-1 mb-2">
             {weekDays.map((day, index) => (
               <div 
                 key={index} 
-                className="text-center text-xs sm:text-sm font-bold text-[#1A1A1A] py-1 sm:py-2 uppercase"
+                className="text-center text-xs sm:text-sm font-bold text-neutral-800 py-1 sm:py-2 uppercase"
                 style={{ fontFamily: 'var(--font-sans)' }}
               >
                 {day}
@@ -114,12 +115,12 @@ const Calendar: React.FC = () => {
                   key={index}
                   onClick={() => day && setSelectedDate(day)}
                   className={`
-                    min-h-[50px] sm:min-h-[80px] p-1 sm:p-2 border cursor-pointer transition-all
+                    min-h-[50px] sm:min-h-[80px] p-1 sm:p-2 border rounded-lg cursor-pointer transition-all duration-200
                     ${!day ? 'invisible' : ''}
                     ${!isCurrentMonth ? 'text-gray-400' : ''}
-                    ${isToday ? 'bg-[#8B4513]/10 border-[#8B4513]' : 'border-[#1A1A1A]'}
-                    ${isSelected ? 'bg-[#8B4513]/20 border-[#8B4513] border-2' : ''}
-                    ${day ? 'hover:bg-gray-50' : ''}
+                    ${isToday ? 'bg-primary-100 border-primary-600 border-2 shadow-sm' : 'border-neutral-200'}
+                    ${isSelected ? 'bg-primary-200 border-primary-600 border-2 shadow-md' : ''}
+                    ${day ? 'hover:bg-neutral-50 hover:border-neutral-300 hover:shadow-sm' : ''}
                   `}
                 >
                   {day && (
@@ -132,7 +133,7 @@ const Calendar: React.FC = () => {
                           {dayEvents.slice(0, 2).map((event) => (
                             <div 
                               key={event.id}
-                              className="text-xs p-1 bg-[#8B4513]/10 text-[#8B4513] truncate font-medium"
+                              className="text-xs p-1 bg-primary-100 text-primary-700 rounded-md truncate font-medium"
                               style={{ fontFamily: 'var(--font-sans)' }}
                               title={event.title}
                             >
@@ -140,7 +141,7 @@ const Calendar: React.FC = () => {
                             </div>
                           ))}
                           {dayEvents.length > 2 && (
-                            <div className="text-xs text-[#4A4A4A] font-medium" style={{ fontFamily: 'var(--font-sans)' }}>
+                            <div className="text-xs text-neutral-600 font-medium" style={{ fontFamily: 'var(--font-sans)' }}>
                               +{dayEvents.length - 2}
                             </div>
                           )}
@@ -149,7 +150,7 @@ const Calendar: React.FC = () => {
                       {/* Mobile indicator */}
                       {dayEvents.length > 0 && (
                         <div className="sm:hidden">
-                          <div className="w-2 h-2 bg-[#8B4513] rounded-full mx-auto"></div>
+                          <div className="w-2 h-2 bg-primary-600 rounded-full mx-auto"></div>
                         </div>
                       )}
                     </>
@@ -166,7 +167,7 @@ const Calendar: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin"></div>
+        <div className="spinner"></div>
       </div>
     );
   }
@@ -174,11 +175,10 @@ const Calendar: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-[#8B4513] mb-4 font-medium">{t('common.error')}: {error}</p>
+        <p className="text-red-600 mb-4 font-medium">{t('common.error')}: {error}</p>
         <button 
           onClick={fetchEvents}
-          className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium shadow-sm hover:shadow-md"
-          style={{ fontFamily: 'var(--font-sans)' }}
+          className="btn btn-primary btn-md"
         >
           {t('common.retry')}
         </button>
@@ -188,9 +188,9 @@ const Calendar: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:flex-row-reverse sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b-2 border-[#1A1A1A]">
+      <div className="flex flex-col sm:flex-row sm:flex-row-reverse sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b-2 border-neutral-800">
         <h1 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'var(--font-serif)' }}>{t('events.title')}</h1>
-        <Link to="/submit/event" className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium w-full sm:w-auto text-center shadow-sm hover:shadow-md" style={{ fontFamily: 'var(--font-sans)' }}>
+        <Link to="/submit/event" className="btn btn-primary btn-md w-full sm:w-auto text-center">
           {t('events.submit')}
         </Link>
       </div>
@@ -201,8 +201,7 @@ const Calendar: React.FC = () => {
         <div className="flex items-center justify-center gap-2 sm:gap-4">
           <button
             onClick={() => navigateMonth(isRTL ? 1 : -1)}
-            className="px-3 py-2 bg-white text-[#1A1A1A] border border-[#1A1A1A] hover:bg-gray-50 transition-all font-bold"
-            style={{ fontFamily: 'var(--font-sans)' }}
+            className="btn btn-secondary btn-md"
           >
             {isRTL ? '←' : '→'}
           </button>
@@ -213,8 +212,7 @@ const Calendar: React.FC = () => {
           
           <button
             onClick={() => navigateMonth(isRTL ? -1 : 1)}
-            className="px-3 py-2 bg-white text-[#1A1A1A] border border-[#1A1A1A] hover:bg-gray-50 transition-all font-bold"
-            style={{ fontFamily: 'var(--font-sans)' }}
+            className="btn btn-secondary btn-md"
           >
             {isRTL ? '→' : '←'}
           </button>
@@ -225,8 +223,7 @@ const Calendar: React.FC = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 border border-[#1A1A1A] text-sm sm:text-base bg-white"
-            style={{ fontFamily: 'var(--font-sans)' }}
+            className="select w-full sm:w-auto"
           >
             <option value="">{t('events.all_categories')}</option>
             <option value="community">{t('events.categories.community')}</option>
@@ -237,11 +234,11 @@ const Calendar: React.FC = () => {
             <option value="religious">{t('events.categories.religious')}</option>
           </select>
 
-          <div className="flex overflow-hidden border border-[#1A1A1A] w-full sm:w-auto">
+          <div className="flex overflow-hidden border border-neutral-300 rounded-lg w-full sm:w-auto shadow-sm">
             <button
               onClick={() => setViewMode('calendar')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 text-sm sm:text-base font-medium transition-all ${
-                viewMode === 'calendar' ? 'bg-[#8B4513] text-white' : 'bg-white text-[#1A1A1A]'
+              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 text-sm sm:text-base font-medium transition-all duration-200 ${
+                viewMode === 'calendar' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-800 hover:bg-neutral-50'
               }`}
               style={{ fontFamily: 'var(--font-sans)' }}
             >
@@ -249,8 +246,8 @@ const Calendar: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 text-sm sm:text-base font-medium transition-all ${
-                viewMode === 'list' ? 'bg-[#8B4513] text-white' : 'bg-white text-[#1A1A1A]'
+              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 text-sm sm:text-base font-medium transition-all duration-200 border-l border-neutral-300 ${
+                viewMode === 'list' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-800 hover:bg-neutral-50'
               }`}
               style={{ fontFamily: 'var(--font-sans)' }}
             >
@@ -282,9 +279,13 @@ const Calendar: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {events.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-[#4A4A4A] mb-4 text-lg" style={{ fontFamily: 'var(--font-body)' }}>{t('events.no_events')}</p>
-              <Link to="/submit/event" className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium shadow-sm hover:shadow-md" style={{ fontFamily: 'var(--font-sans)' }}>
+            <div className="text-center py-12 card">
+              <svg className="w-16 h-16 mx-auto mb-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p className="text-neutral-600 mb-4 text-lg" style={{ fontFamily: 'var(--font-body)' }}>{t('events.no_events')}</p>
+              <Link to="/submit/event" className="btn btn-primary btn-md">
                 {t('events.submit')}
               </Link>
             </div>

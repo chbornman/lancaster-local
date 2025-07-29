@@ -9,7 +9,8 @@
   "language": {
     "select": "Select Language",
     "translated": "Translated from {{language}}",
-    "original": "Original ({{language}})"
+    "original": "Original ({{language}})",
+    "translation": "Translation"
   },
   "posts": {
     "title": "Community News",

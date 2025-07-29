@@ -67,7 +67,7 @@ services:
     environment:
       DATABASE_URL: postgresql://lancaster:lancaster_pass@db:5432/lancaster_community
       REDIS_URL: redis://redis:6379
-      ADMIN_PASSWORD: secure_admin_password_2024
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY}
       DEFAULT_LANGUAGE: en
       SUPPORTED_LANGUAGES: en,es,de,fr,zh,ar,he,fa,ur
@@ -85,7 +85,9 @@ services:
     command: cargo watch -x run
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     environment:
       VITE_API_URL: http://localhost:3000/api
       VITE_DEFAULT_LANGUAGE: en

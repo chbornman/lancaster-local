@@ -1,4 +1,4 @@
-use chrono::{Utc, NaiveTime, Duration};
+use chrono::{Utc, NaiveTime, Duration, NaiveDate};
 use sqlx::postgres::PgPoolOptions;
 use rand::Rng;
 use std::time::Instant;
@@ -656,63 +656,99 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
     let mut events_created = 0;
     let mut translations_created = 0;
     
-    // Lancaster-themed events
+    // Lancaster-themed events - mixing some relative dates with specific July 2025 dates
     let events_data = vec![
-        // Published events
+        // Published events - July 2025 specific events
         (
             "Lancaster Farmers Market",
             "info@lancastermarket.org",
-            "Weekly Farmers Market",
-            Some("Shop fresh, locally grown produce, artisanal goods, and handmade crafts at Lancaster's premier farmers market."),
-            7, // Days from now
+            "Weekly Farmers Market - Independence Week Special",
+            Some("Shop fresh, locally grown produce, artisanal goods, and handmade crafts at Lancaster's premier farmers market. Special patriotic themed vendors for Independence Day week!"),
+            NaiveDate::from_ymd_opt(2025, 7, 3).unwrap(),
             Some("08:00"),
             Some("Lancaster Central Market, 23 N Market St"),
             Some("market"),
             true,
             None,
-            None,
             true,
         ),
         (
-            "First Friday Lancaster",
-            "events@firstfridaylancaster.com", 
-            "First Friday Arts Walk",
-            Some("Explore Lancaster's vibrant arts scene on the first Friday of every month. Galleries stay open late with special exhibitions."),
-            30,
-            Some("17:00"),
-            Some("Downtown Lancaster Arts District"),
-            Some("arts"),
+            "City of Lancaster",
+            "events@cityoflancasterpa.gov",
+            "4th of July Fireworks Spectacular",
+            Some("Join us for Lancaster's biggest fireworks display! Food trucks, live music, and family activities start at 6 PM. Fireworks begin at dusk. Bring blankets and chairs!"),
+            NaiveDate::from_ymd_opt(2025, 7, 4).unwrap(),
+            Some("18:00"),
+            Some("Buchanan Park, Race St & Buchanan Ave"),
+            Some("community"),
             true,
-            None,
             None,
             true,
         ),
         (
             "Lancaster Symphony",
             "tickets@lancastersymphony.org",
-            "Beethoven's 9th Symphony",
-            Some("Experience the power and majesty of Beethoven's final symphony, featuring the Lancaster Symphony Orchestra and Chorus."),
-            14,
+            "Summer Pops: Music of John Williams",
+            Some("Enjoy the iconic film music of John Williams under the stars! Featuring themes from Star Wars, Jurassic Park, Harry Potter, and more. Bring a picnic!"),
+            NaiveDate::from_ymd_opt(2025, 7, 12).unwrap(),
             Some("19:30"),
-            Some("Fulton Theatre, 12 N Prince St"),
+            Some("Buchanan Park Amphitheater"),
             Some("music"),
-            false,
-            Some(45.00),
-            Some("https://www.lancastersymphony.org/tickets"),
+            true,
+            None,
             true,
         ),
         (
             "Lancaster Running Club",
             "info@lancasterrunning.org",
-            "Red Rose 5K Run/Walk",
-            Some("Join hundreds of runners and walkers for Lancaster's favorite 5K through historic downtown and County Park."),
-            21,
+            "Beat the Heat 5K Run/Walk",
+            Some("Early morning summer 5K through shaded paths of County Park. Post-race refreshments and ice cream social included!"),
+            NaiveDate::from_ymd_opt(2025, 7, 19).unwrap(),
             Some("07:00"),
-            Some("Buchanan Park, Race St & Buchanan Ave"),
+            Some("Lancaster County Park, 1050 Rockford Rd"),
             Some("sports"),
             false,
-            Some(35.00),
-            Some("https://www.redrose5k.com"),
+            Some("https://www.lancasterrunning.org/summer5k"),
+            true,
+        ),
+        (
+            "Lancaster Diversity Coalition",
+            "info@lancasterdiversity.org",
+            "International Food & Culture Festival",
+            Some("Celebrate Lancaster's cultural diversity! Enjoy food from 20+ countries, traditional performances, craft vendors, and children's activities."),
+            NaiveDate::from_ymd_opt(2025, 7, 26).unwrap(),
+            Some("11:00"),
+            Some("Penn Square & King Street"),
+            Some("cultural"),
+            true,
+            None,
+            true,
+        ),
+        // Regular relative date events
+        (
+            "First Friday Lancaster",
+            "events@firstfridaylancaster.com", 
+            "First Friday Arts Walk",
+            Some("Explore Lancaster's vibrant arts scene on the first Friday of every month. Galleries stay open late with special exhibitions."),
+            NaiveDate::from_ymd_opt(2025, 8, 1).unwrap(), // August First Friday
+            Some("17:00"),
+            Some("Downtown Lancaster Arts District"),
+            Some("arts"),
+            true,
+            None,
+            true,
+        ),
+        (
+            "Lancaster Library System",
+            "programs@lancasterlibrary.org",
+            "Summer Reading Challenge Finale",
+            Some("Celebrate the end of our summer reading challenge! Prizes, games, face painting, and a special appearance by children's author Sarah Johnson."),
+            NaiveDate::from_ymd_opt(2025, 7, 31).unwrap(),
+            Some("14:00"),
+            Some("Lancaster Public Library, 125 N Duke St"),
+            Some("education"),
+            true,
+            None,
             true,
         ),
         // Unpublished events
@@ -721,21 +757,32 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
             "volunteer@lancasterhelps.org",
             "Park Cleanup Day",
             Some("Help keep Lancaster beautiful! Join fellow volunteers for a community park cleanup. Supplies provided."),
-            15,
+            NaiveDate::from_ymd_opt(2025, 7, 13).unwrap(),
             Some("09:00"),
             Some("Long's Park, 1441 Harrisburg Pike"),
             Some("community"),
             true,
             None,
-            None,
+            false,
+        ),
+        (
+            "Lancaster Youth Soccer",
+            "info@lancasteryouthsoccer.org",
+            "Summer Soccer Camp Registration Opens",
+            Some("Register your child for our popular summer soccer camp! Ages 6-14, all skill levels welcome. Professional coaching in a fun environment."),
+            NaiveDate::from_ymd_opt(2025, 7, 21).unwrap(),
+            Some("09:00"),
+            Some("Lancaster Soccer Complex, 2895 Willow Street Pike"),
+            Some("sports"),
+            false,
+            Some("https://www.lancasteryouthsoccer.org/camp"),
             false,
         ),
     ];
     
     println!("  Processing {} events...", events_data.len());
     
-    for (idx, (organizer_name, organizer_email, title, description, days_from_now, event_time, location, category, is_free, ticket_price, ticket_url, published)) in events_data.into_iter().enumerate() {
-        let event_date = (Utc::now() + Duration::days(days_from_now)).date_naive();
+    for (idx, (organizer_name, organizer_email, title, description, event_date, event_time, location, category, is_free, ticket_url, published)) in events_data.into_iter().enumerate() {
         let event_time = event_time.map(|t| NaiveTime::parse_from_str(t, "%H:%M").unwrap());
         
         // Random time in the past for creation
@@ -750,9 +797,9 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
             r#"
             INSERT INTO events (
                 organizer_name, organizer_email, title, description, event_date, event_time,
-                location, category, is_free, ticket_price, ticket_url, original_language,
+                location, category, is_free, ticket_url, original_language,
                 text_direction, published, created_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING id
             "#
         )
@@ -765,7 +812,6 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
         .bind(location)
         .bind(category)
         .bind(is_free)
-        .bind(ticket_price)
         .bind(ticket_url)
         .bind(original_language)
         .bind(text_direction)
@@ -778,85 +824,150 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
         
         // Add simulated translations for published events
         if published {
-            let translations = if title == "Weekly Farmers Market" {
-                vec![
-                    ("es", "Mercado de Agricultores Semanal".to_string(), 
-                     Some("Compre productos frescos cultivados localmente, productos artesanales y artesanías hechas a mano en el principal mercado de agricultores de Lancaster.".to_string()), "ltr"),
-                    ("ar", "سوق المزارعين الأسبوعي".to_string(),
-                     Some("تسوق للحصول على منتجات طازجة مزروعة محليًا والسلع الحرفية والحرف اليدوية في سوق المزارعين الرئيسي في لانكستر.".to_string()), "rtl"),
-                    ("he", "שוק איכרים שבועי".to_string(),
-                     Some("קנו תוצרת טרייה שגדלה באזור, מוצרים אומנותיים ומלאכות יד בשוק האיכרים המוביל של לנקסטר.".to_string()), "rtl"),
-                    ("fr", "Marché Fermier Hebdomadaire".to_string(),
-                     Some("Achetez des produits frais cultivés localement, des produits artisanaux et de l'artisanat fait main au principal marché fermier de Lancaster.".to_string()), "ltr"),
-                    ("de", "Wöchentlicher Bauernmarkt".to_string(),
-                     Some("Kaufen Sie frische, lokal angebaute Produkte, handwerkliche Waren und handgefertigte Kunsthandwerke auf Lancasters führendem Bauernmarkt.".to_string()), "ltr"),
-                    ("zh", "每周农贸市场".to_string(),
-                     Some("在兰开斯特主要的农贸市场购买新鲜的本地种植产品、手工制品和手工艺品。".to_string()), "ltr"),
-                    ("fa", "بازار کشاورزان هفتگی".to_string(),
-                     Some("محصولات تازه محلی، کالاهای صنایع دستی و صنایع دستی را در بازار کشاورزان پیشرو لنکستر خریداری کنید.".to_string()), "rtl"),
-                    ("ur", "ہفتہ وار کسان بازار".to_string(),
-                     Some("لنکاسٹر کی سرکردہ کسان منڈی میں تازہ، مقامی طور پر اگائی گئی پیداوار، دستکاری کی اشیاء اور ہاتھ سے بنی دستکاری خریدیں۔".to_string()), "rtl"),
-                ]
-            } else if title == "First Friday Arts Walk" {
-                vec![
-                    ("es", "Paseo de Arte del Primer Viernes".to_string(),
-                     Some("Explore la vibrante escena artística de Lancaster el primer viernes de cada mes. Las galerías permanecen abiertas hasta tarde con exposiciones especiales.".to_string()), "ltr"),
-                    ("ar", "جولة الفنون في أول جمعة".to_string(),
-                     Some("استكشف مشهد الفنون النابض بالحياة في لانكستر في أول جمعة من كل شهر. تبقى المعارض مفتوحة حتى وقت متأخر مع معارض خاصة.".to_string()), "rtl"),
-                    ("he", "סיור אמנות ביום שישי הראשון".to_string(),
-                     Some("חקרו את סצנת האמנות התוססת של לנקסטר ביום שישי הראשון של כל חודש. הגלריות נשארות פתוחות עד מאוחר עם תערוכות מיוחדות.".to_string()), "rtl"),
-                    ("fr", "Promenade Artistique du Premier Vendredi".to_string(),
-                     Some("Explorez la scène artistique vibrante de Lancaster le premier vendredi de chaque mois. Les galeries restent ouvertes tard avec des expositions spéciales.".to_string()), "ltr"),
-                    ("de", "Kunstspaziergang am ersten Freitag".to_string(),
-                     Some("Erkunden Sie Lancasters lebendige Kunstszene am ersten Freitag jeden Monats. Galerien bleiben mit Sonderausstellungen bis spät geöffnet.".to_string()), "ltr"),
-                    ("zh", "第一个周五艺术步行".to_string(),
-                     Some("在每月的第一个周五探索兰开斯特充满活力的艺术场景。画廊将举办特别展览，开放至晚。".to_string()), "ltr"),
-                    ("fa", "قدم زدن هنری اولین جمعه".to_string(),
-                     Some("صحنه هنری پرجنب و جوش لنکستر را در اولین جمعه هر ماه کشف کنید. گالری‌ها با نمایشگاه‌های ویژه تا دیروقت باز می‌مانند.".to_string()), "rtl"),
-                    ("ur", "پہلے جمعہ کی فن واک".to_string(),
-                     Some("ہر مہینے کے پہلے جمعہ کو لنکاسٹر کی زندگی سے بھرپور آرٹ سین کی تلاش کریں۔ گیلریاں خصوصی نمائشوں کے ساتھ دیر تک کھلی رہتی ہیں۔".to_string()), "rtl"),
-                ]
-            } else if title == "Beethoven's 9th Symphony" {
-                vec![
-                    ("es", "Novena Sinfonía de Beethoven".to_string(),
-                     Some("Experimente el poder y la majestuosidad de la sinfonía final de Beethoven, con la Orquesta y Coro Sinfónicos de Lancaster.".to_string()), "ltr"),
-                    ("ar", "السيمفونية التاسعة لبيتهوفن".to_string(),
-                     Some("اختبر قوة وعظمة سيمفونية بيتهوفن الأخيرة، مع أوركسترا وجوقة لانكستر السيمفونية.".to_string()), "rtl"),
-                    ("he", "הסימפוניה התשיעית של בטהובן".to_string(),
-                     Some("חוו את העוצמה וההוד של הסימפוניה האחרונה של בטהובן, עם התזמורת הסימפונית והמקהלה של לנקסטר.".to_string()), "rtl"),
-                    ("fr", "9e Symphonie de Beethoven".to_string(),
-                     Some("Vivez la puissance et la majesté de la dernière symphonie de Beethoven, avec l'Orchestre symphonique et le Chœur de Lancaster.".to_string()), "ltr"),
-                    ("de", "Beethovens 9. Sinfonie".to_string(),
-                     Some("Erleben Sie die Kraft und Majestät von Beethovens letzter Sinfonie mit dem Lancaster Symphony Orchestra und Chor.".to_string()), "ltr"),
-                    ("zh", "贝多芬第九交响曲".to_string(),
-                     Some("与兰开斯特交响乐团和合唱团一起体验贝多芬最后交响曲的力量和威严。".to_string()), "ltr"),
-                    ("fa", "سمفونی نهم بتهوون".to_string(),
-                     Some("قدرت و شکوه آخرین سمفونی بتهوون را با ارکستر و کُر سمفونی لنکستر تجربه کنید.".to_string()), "rtl"),
-                    ("ur", "بیٹھوون کی نویں سمفنی".to_string(),
-                     Some("لنکاسٹر سمفنی آرکیسٹرا اور کوائر کے ساتھ بیٹھوون کی آخری سمفنی کی طاقت اور شان و شوکت کا تجربہ کریں۔".to_string()), "rtl"),
-                ]
-            } else if title == "Red Rose 5K Run/Walk" {
-                vec![
-                    ("es", "Carrera/Caminata Red Rose 5K".to_string(),
-                     Some("Únase a cientos de corredores y caminantes para el 5K favorito de Lancaster a través del centro histórico y el parque del condado.".to_string()), "ltr"),
-                    ("ar", "سباق/مشي الوردة الحمراء 5K".to_string(),
-                     Some("انضم إلى مئات العدائين والمشاة في سباق 5K المفضل في لانكستر عبر وسط المدينة التاريخي وحديقة المقاطعة.".to_string()), "rtl"),
-                    ("he", "ריצה/הליכה 5K של הוורד האדום".to_string(),
-                     Some("הצטרפו למאות רצים והולכים ל-5K האהוב על לנקסטר דרך מרכז העיר ההיסטורי ופארק המחוז.".to_string()), "rtl"),
-                    ("fr", "Course/Marche Red Rose 5K".to_string(),
-                     Some("Rejoignez des centaines de coureurs et de marcheurs pour le 5K préféré de Lancaster à travers le centre-ville historique et le parc du comté.".to_string()), "ltr"),
-                    ("de", "Red Rose 5K Lauf/Spaziergang".to_string(),
-                     Some("Schließen Sie sich Hunderten von Läufern und Spaziergängern bei Lancasters Lieblings-5K durch die historische Innenstadt und den County Park an.".to_string()), "ltr"),
-                    ("zh", "红玫瑰五公里跑步/步行".to_string(),
-                     Some("加入数百名跑步者和步行者，参加兰开斯特最受欢迎的五公里赛事，穿过历史悠久的市中心和县公园。".to_string()), "ltr"),
-                    ("fa", "دو/پیاده‌روی ۵ کیلومتری رُز سرخ".to_string(),
-                     Some("به صدها دونده و پیاده‌رو در محبوب‌ترین مسابقه ۵ کیلومتری لنکستر از طریق مرکز تاریخی شهر و پارک منطقه بپیوندید.".to_string()), "rtl"),
-                    ("ur", "ریڈ روز 5K دوڑ/واک".to_string(),
-                     Some("لنکاسٹر کی پسندیدہ 5K میں سینکڑوں دوڑنے والوں اور چلنے والوں کے ساتھ شامل ہوں جو تاریخی شہر کے مرکز اور کاؤنٹی پارک سے گزرتی ہے۔".to_string()), "rtl"),
-                ]
-            } else {
-                vec![
-                    ("es", format!("ES: {}", title), description.map(|d| format!("ES: {}", d)), "ltr"),
+            let translations = match title {
+                "Weekly Farmers Market - Independence Week Special" => {
+                    vec![
+                        ("es", "Mercado de Agricultores Semanal - Especial Semana de la Independencia".to_string(), 
+                         Some("Compre productos frescos cultivados localmente, productos artesanales y artesanías hechas a mano en el principal mercado de agricultores de Lancaster. ¡Vendedores con temática patriótica especial para la semana del Día de la Independencia!".to_string()), "ltr"),
+                        ("ar", "سوق المزارعين الأسبوعي - خاص بأسبوع الاستقلال".to_string(),
+                         Some("تسوق للحصول على منتجات طازجة مزروعة محليًا والسلع الحرفية والحرف اليدوية في سوق المزارعين الرئيسي في لانكستر. بائعون ذوو طابع وطني خاص لأسبوع عيد الاستقلال!".to_string()), "rtl"),
+                        ("he", "שוק איכרים שבועי - מיוחד לשבוע העצמאות".to_string(),
+                         Some("קנו תוצרת טרייה שגדלה באזור, מוצרים אומנותיים ומלאכות יד בשוק האיכרים המוביל של לנקסטר. דוכנים בנושא פטריוטי מיוחד לשבוע יום העצמאות!".to_string()), "rtl"),
+                        ("fr", "Marché Fermier Hebdomadaire - Spécial Semaine de l'Indépendance".to_string(),
+                         Some("Achetez des produits frais cultivés localement, des produits artisanaux et de l'artisanat fait main au principal marché fermier de Lancaster. Vendeurs à thème patriotique spécial pour la semaine de la fête de l'Indépendance!".to_string()), "ltr"),
+                        ("de", "Wöchentlicher Bauernmarkt - Unabhängigkeitswoche Spezial".to_string(),
+                         Some("Kaufen Sie frische, lokal angebaute Produkte, handwerkliche Waren und handgefertigte Kunsthandwerke auf Lancasters führendem Bauernmarkt. Spezielle patriotisch gestaltete Verkäufer für die Unabhängigkeitswoche!".to_string()), "ltr"),
+                        ("zh", "每周农贸市场 - 独立周特别活动".to_string(),
+                         Some("在兰开斯特主要的农贸市场购买新鲜的本地种植产品、手工制品和手工艺品。独立日周特别爱国主题摊贩！".to_string()), "ltr"),
+                        ("fa", "بازار کشاورزان هفتگی - ویژه هفته استقلال".to_string(),
+                         Some("محصولات تازه محلی، کالاهای صنایع دستی و صنایع دستی را در بازار کشاورزان پیشرو لنکستر خریداری کنید. فروشندگان با موضوع میهن‌پرستانه ویژه برای هفته روز استقلال!".to_string()), "rtl"),
+                        ("ur", "ہفتہ وار کسان بازار - آزادی ہفتہ خصوصی".to_string(),
+                         Some("لنکاسٹر کی سرکردہ کسان منڈی میں تازہ، مقامی طور پر اگائی گئی پیداوار، دستکاری کی اشیاء اور ہاتھ سے بنی دستکاری خریدیں۔ یوم آزادی کے ہفتے کے لیے خصوصی حب الوطنی کے موضوع والے فروخت کنندگان!".to_string()), "rtl"),
+                    ]
+                },
+                "4th of July Fireworks Spectacular" => {
+                    vec![
+                        ("es", "Espectacular de Fuegos Artificiales del 4 de Julio".to_string(),
+                         Some("¡Únase a nosotros para la exhibición de fuegos artificiales más grande de Lancaster! Camiones de comida, música en vivo y actividades familiares comienzan a las 6 PM. Los fuegos artificiales comienzan al anochecer. ¡Traigan mantas y sillas!".to_string()), "ltr"),
+                        ("ar", "عرض الألعاب النارية المذهل في الرابع من يوليو".to_string(),
+                         Some("انضم إلينا لأكبر عرض للألعاب النارية في لانكستر! شاحنات الطعام والموسيقى الحية والأنشطة العائلية تبدأ في الساعة 6 مساءً. تبدأ الألعاب النارية عند الغسق. أحضروا البطانيات والكراسي!".to_string()), "rtl"),
+                        ("he", "מופע זיקוקים מרהיב ב-4 ביולי".to_string(),
+                         Some("הצטרפו אלינו למופע הזיקוקים הגדול ביותר של לנקסטר! משאיות אוכל, מוזיקה חיה ופעילויות משפחתיות מתחילות ב-18:00. הזיקוקים מתחילים בשקיעה. הביאו שמיכות וכיסאות!".to_string()), "rtl"),
+                        ("fr", "Spectacle de Feux d'Artifice du 4 Juillet".to_string(),
+                         Some("Rejoignez-nous pour le plus grand spectacle de feux d'artifice de Lancaster! Food trucks, musique live et activités familiales commencent à 18h. Les feux d'artifice commencent au crépuscule. Apportez des couvertures et des chaises!".to_string()), "ltr"),
+                        ("de", "4. Juli Feuerwerk Spektakel".to_string(),
+                         Some("Begleiten Sie uns zu Lancasters größtem Feuerwerk! Food Trucks, Live-Musik und Familienaktivitäten beginnen um 18 Uhr. Das Feuerwerk beginnt in der Dämmerung. Bringen Sie Decken und Stühle mit!".to_string()), "ltr"),
+                        ("zh", "7月4日烟花盛会".to_string(),
+                         Some("加入我们观看兰开斯特最大的烟花表演！餐车、现场音乐和家庭活动从下午6点开始。烟花在黄昏时分开始。请带上毯子和椅子！".to_string()), "ltr"),
+                        ("fa", "نمایش فوق‌العاده آتش‌بازی چهارم جولای".to_string(),
+                         Some("به ما بپیوندید برای بزرگترین نمایش آتش‌بازی لنکستر! کامیون‌های غذا، موسیقی زنده و فعالیت‌های خانوادگی از ساعت 6 بعدازظهر شروع می‌شود. آتش‌بازی در غروب شروع می‌شود. پتو و صندلی بیاورید!".to_string()), "rtl"),
+                        ("ur", "4 جولائی آتش بازی کا شاندار نظارہ".to_string(),
+                         Some("لنکاسٹر کی سب سے بڑی آتش بازی کے نمائش میں ہمارے ساتھ شامل ہوں! فوڈ ٹرکس، لائیو موسیقی اور خاندانی سرگرمیاں شام 6 بجے شروع ہوتی ہیں۔ آتش بازی غروب آفتاب کے وقت شروع ہوتی ہے۔ کمبل اور کرسیاں لائیں!".to_string()), "rtl"),
+                    ]
+                },
+                "Summer Pops: Music of John Williams" => {
+                    vec![
+                        ("es", "Pops de Verano: Música de John Williams".to_string(),
+                         Some("¡Disfruta de la icónica música cinematográfica de John Williams bajo las estrellas! Con temas de Star Wars, Jurassic Park, Harry Potter y más. ¡Trae un picnic!".to_string()), "ltr"),
+                        ("ar", "موسيقى الصيف الشعبية: موسيقى جون ويليامز".to_string(),
+                         Some("استمتع بموسيقى الأفلام الأيقونية لجون ويليامز تحت النجوم! يضم موضوعات من حرب النجوم وحديقة جوراسيك وهاري بوتر والمزيد. أحضر نزهة!".to_string()), "rtl"),
+                        ("he", "פופ קיץ: המוזיקה של ג'ון וויליאמס".to_string(),
+                         Some("תיהנו ממוזיקת הסרטים האייקונית של ג'ון וויליאמס תחת הכוכבים! כולל נושאים ממלחמת הכוכבים, פארק היורה, הארי פוטר ועוד. הביאו פיקניק!".to_string()), "rtl"),
+                        ("fr", "Pops d'Été: Musique de John Williams".to_string(),
+                         Some("Profitez de la musique de film emblématique de John Williams sous les étoiles! Avec des thèmes de Star Wars, Jurassic Park, Harry Potter et plus. Apportez un pique-nique!".to_string()), "ltr"),
+                        ("de", "Sommer-Pops: Musik von John Williams".to_string(),
+                         Some("Genießen Sie die ikonische Filmmusik von John Williams unter den Sternen! Mit Themen aus Star Wars, Jurassic Park, Harry Potter und mehr. Bringen Sie ein Picknick mit!".to_string()), "ltr"),
+                        ("zh", "夏季流行音乐会：约翰·威廉姆斯的音乐".to_string(),
+                         Some("在星空下欣赏约翰·威廉姆斯的标志性电影音乐！包括《星球大战》、《侏罗纪公园》、《哈利·波特》等主题曲。带上野餐！".to_string()), "ltr"),
+                        ("fa", "موسیقی پاپ تابستانی: موسیقی جان ویلیامز".to_string(),
+                         Some("از موسیقی فیلم نمادین جان ویلیامز زیر ستارگان لذت ببرید! شامل تم‌هایی از جنگ ستارگان، پارک ژوراسیک، هری پاتر و بیشتر. پیک‌نیک بیاورید!".to_string()), "rtl"),
+                        ("ur", "سمر پاپس: جان ولیمز کی موسیقی".to_string(),
+                         Some("ستاروں کے نیچے جان ولیمز کی مشہور فلمی موسیقی سے لطف اندوز ہوں! اسٹار وارز، جراسک پارک، ہیری پوٹر اور مزید کے موضوعات شامل ہیں۔ پکنک لائیں!".to_string()), "rtl"),
+                    ]
+                },
+                "Beat the Heat 5K Run/Walk" => {
+                    vec![
+                        ("es", "Carrera/Caminata 5K Vence el Calor".to_string(),
+                         Some("5K matutino de verano a través de senderos sombreados del Parque del Condado. ¡Refrigerios después de la carrera y reunión social con helados incluidos!".to_string()), "ltr"),
+                        ("ar", "سباق/مشي 5K تغلب على الحرارة".to_string(),
+                         Some("سباق 5K صيفي في الصباح الباكر عبر المسارات المظللة في حديقة المقاطعة. يشمل المرطبات بعد السباق واجتماع اجتماعي مع الآيس كريم!".to_string()), "rtl"),
+                        ("he", "ריצה/הליכה 5K נצח את החום".to_string(),
+                         Some("5K קיצי בבוקר המוקדם דרך שבילים מוצלים בפארק המחוז. כולל כיבוד לאחר המרוץ ומפגש חברתי עם גלידה!".to_string()), "rtl"),
+                        ("fr", "Course/Marche 5K Battez la Chaleur".to_string(),
+                         Some("5K d'été tôt le matin à travers les sentiers ombragés du parc du comté. Rafraîchissements après la course et social de crème glacée inclus!".to_string()), "ltr"),
+                        ("de", "Beat the Heat 5K Lauf/Spaziergang".to_string(),
+                         Some("Frühmorgendlicher Sommer-5K durch schattige Wege des County Parks. Erfrischungen nach dem Rennen und Eis-Social inklusive!".to_string()), "ltr"),
+                        ("zh", "战胜炎热5公里跑步/步行".to_string(),
+                         Some("清晨夏季5公里穿越县公园阴凉小径。包括赛后茶点和冰淇淋社交活动！".to_string()), "ltr"),
+                        ("fa", "دو/پیاده‌روی ۵ کیلومتری بر گرما غلبه کنید".to_string(),
+                         Some("۵ کیلومتر تابستانی صبح زود از میان مسیرهای سایه‌دار پارک شهرستان. شامل نوشیدنی‌های پس از مسابقه و گردهمایی بستنی!".to_string()), "rtl"),
+                        ("ur", "گرمی کو شکست دیں 5K دوڑ/واک".to_string(),
+                         Some("کاؤنٹی پارک کے سایہ دار راستوں سے صبح سویرے موسم گرما کی 5K۔ دوڑ کے بعد ریفریشمنٹ اور آئس کریم سوشل شامل ہے!".to_string()), "rtl"),
+                    ]
+                },
+                "First Friday Arts Walk" => {
+                    vec![
+                        ("es", "Paseo de Arte del Primer Viernes".to_string(),
+                         Some("Explore la vibrante escena artística de Lancaster el primer viernes de cada mes. Las galerías permanecen abiertas hasta tarde con exposiciones especiales.".to_string()), "ltr"),
+                        ("ar", "جولة الفنون في أول جمعة".to_string(),
+                         Some("استكشف مشهد الفنون النابض بالحياة في لانكستر في أول جمعة من كل شهر. تبقى المعارض مفتوحة حتى وقت متأخر مع معارض خاصة.".to_string()), "rtl"),
+                        ("he", "סיור אמנות ביום שישי הראשון".to_string(),
+                         Some("חקרו את סצנת האמנות התוססת של לנקסטר ביום שישי הראשון של כל חודש. הגלריות נשארות פתוחות עד מאוחר עם תערוכות מיוחדות.".to_string()), "rtl"),
+                        ("fr", "Promenade Artistique du Premier Vendredi".to_string(),
+                         Some("Explorez la scène artistique vibrante de Lancaster le premier vendredi de chaque mois. Les galeries restent ouvertes tard avec des expositions spéciales.".to_string()), "ltr"),
+                        ("de", "Kunstspaziergang am ersten Freitag".to_string(),
+                         Some("Erkunden Sie Lancasters lebendige Kunstszene am ersten Freitag jeden Monats. Galerien bleiben mit Sonderausstellungen bis spät geöffnet.".to_string()), "ltr"),
+                        ("zh", "第一个周五艺术步行".to_string(),
+                         Some("在每月的第一个周五探索兰开斯特充满活力的艺术场景。画廊将举办特别展览，开放至晚。".to_string()), "ltr"),
+                        ("fa", "قدم زدن هنری اولین جمعه".to_string(),
+                         Some("صحنه هنری پرجنب و جوش لنکستر را در اولین جمعه هر ماه کشف کنید. گالری‌ها با نمایشگاه‌های ویژه تا دیروقت باز می‌مانند.".to_string()), "rtl"),
+                        ("ur", "پہلے جمعہ کی فن واک".to_string(),
+                         Some("ہر مہینے کے پہلے جمعہ کو لنکاسٹر کی زندگی سے بھرپور آرٹ سین کی تلاش کریں۔ گیلریاں خصوصی نمائشوں کے ساتھ دیر تک کھلی رہتی ہیں۔".to_string()), "rtl"),
+                    ]
+                },
+                "Beethoven's 9th Symphony" => {
+                    vec![
+                        ("es", "Novena Sinfonía de Beethoven".to_string(),
+                         Some("Experimente el poder y la majestuosidad de la sinfonía final de Beethoven, con la Orquesta y Coro Sinfónicos de Lancaster.".to_string()), "ltr"),
+                        ("ar", "السيمفونية التاسعة لبيتهوفن".to_string(),
+                         Some("اختبر قوة وعظمة سيمفونية بيتهوفن الأخيرة، مع أوركسترا وجوقة لانكستر السيمفونية.".to_string()), "rtl"),
+                        ("he", "הסימפוניה התשיעית של בטהובן".to_string(),
+                         Some("חוו את העוצמה וההוד של הסימפוניה האחרונה של בטהובן, עם התזמורת הסימפונית והמקהלה של לנקסטר.".to_string()), "rtl"),
+                        ("fr", "9e Symphonie de Beethoven".to_string(),
+                         Some("Vivez la puissance et la majesté de la dernière symphonie de Beethoven, avec l'Orchestre symphonique et le Chœur de Lancaster.".to_string()), "ltr"),
+                        ("de", "Beethovens 9. Sinfonie".to_string(),
+                         Some("Erleben Sie die Kraft und Majestät von Beethovens letzter Sinfonie mit dem Lancaster Symphony Orchestra und Chor.".to_string()), "ltr"),
+                        ("zh", "贝多芬第九交响曲".to_string(),
+                         Some("与兰开斯特交响乐团和合唱团一起体验贝多芬最后交响曲的力量和威严。".to_string()), "ltr"),
+                        ("fa", "سمفونی نهم بتهوون".to_string(),
+                         Some("قدرت و شکوه آخرین سمفونی بتهوون را با ارکستر و کُر سمفونی لنکستر تجربه کنید.".to_string()), "rtl"),
+                        ("ur", "بیٹھوون کی نویں سمفنی".to_string(),
+                         Some("لنکاسٹر سمفنی آرکیسٹرا اور کوائر کے ساتھ بیٹھوون کی آخری سمفنی کی طاقت اور شان و شوکت کا تجربہ کریں۔".to_string()), "rtl"),
+                    ]
+                },
+                "Red Rose 5K Run/Walk" => {
+                    vec![
+                        ("es", "Carrera/Caminata Red Rose 5K".to_string(),
+                         Some("Únase a cientos de corredores y caminantes para el 5K favorito de Lancaster a través del centro histórico y el parque del condado.".to_string()), "ltr"),
+                        ("ar", "سباق/مشي الوردة الحمراء 5K".to_string(),
+                         Some("انضم إلى مئات العدائين والمشاة في سباق 5K المفضل في لانكستر عبر وسط المدينة التاريخي وحديقة المقاطعة.".to_string()), "rtl"),
+                        ("he", "ריצה/הליכה 5K של הוורד האדום".to_string(),
+                         Some("הצטרפו למאות רצים והולכים ל-5K האהוב על לנקסטר דרך מרכז העיר ההיסטורי ופארק המחוז.".to_string()), "rtl"),
+                        ("fr", "Course/Marche Red Rose 5K".to_string(),
+                         Some("Rejoignez des centaines de coureurs et de marcheurs pour le 5K préféré de Lancaster à travers le centre-ville historique et le parc du comté.".to_string()), "ltr"),
+                        ("de", "Red Rose 5K Lauf/Spaziergang".to_string(),
+                         Some("Schließen Sie sich Hunderten von Läufern und Spaziergängern bei Lancasters Lieblings-5K durch die historische Innenstadt und den County Park an.".to_string()), "ltr"),
+                        ("zh", "红玫瑰五公里跑步/步行".to_string(),
+                         Some("加入数百名跑步者和步行者，参加兰开斯特最受欢迎的五公里赛事，穿过历史悠久的市中心和县公园。".to_string()), "ltr"),
+                        ("fa", "دو/پیاده‌روی ۵ کیلومتری رُز سرخ".to_string(),
+                         Some("به صدها دونده و پیاده‌رو در محبوب‌ترین مسابقه ۵ کیلومتری لنکستر از طریق مرکز تاریخی شهر و پارک منطقه بپیوندید.".to_string()), "rtl"),
+                        ("ur", "ریڈ روز 5K دوڑ/واک".to_string(),
+                         Some("لنکاسٹر کی پسندیدہ 5K میں سینکڑوں دوڑنے والوں اور چلنے والوں کے ساتھ شامل ہوں جو تاریخی شہر کے مرکز اور کاؤنٹی پارک سے گزرتی ہے۔".to_string()), "rtl"),
+                    ]
+                },
+                _ => {
+                    vec![
+                        ("es", format!("ES: {}", title), description.map(|d| format!("ES: {}", d)), "ltr"),
                     ("ar", format!("AR: {}", title), description.map(|d| format!("AR: {}", d)), "rtl"),
                     ("he", format!("HE: {}", title), description.map(|d| format!("HE: {}", d)), "rtl"),
                     ("fr", format!("FR: {}", title), description.map(|d| format!("FR: {}", d)), "ltr"),
@@ -865,6 +976,7 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
                     ("fa", format!("FA: {}", title), description.map(|d| format!("FA: {}", d)), "rtl"),
                     ("ur", format!("UR: {}", title), description.map(|d| format!("UR: {}", d)), "rtl"),
                 ]
+                }
             };
             
             for (lang_code, trans_title, trans_desc, direction) in translations {

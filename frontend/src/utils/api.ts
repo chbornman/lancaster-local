@@ -88,4 +88,8 @@ export const endpoints = {
     api.get('/admin/posts'),
   getAdminEvents: (): Promise<AxiosResponse<{ events: Event[] }>> => 
     api.get('/admin/events'),
+  deletePost: (id: number): Promise<AxiosResponse<{ message: string }>> => 
+    api.delete(`/admin/posts/${id}`),
+  deleteEvent: (id: number): Promise<AxiosResponse<{ message: string }>> => 
+    api.delete(`/admin/events/${id}`),
 };

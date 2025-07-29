@@ -23,10 +23,32 @@ A multi-language community platform with news feed and calendar, featuring full 
 
 ## Quick Start
 
+### Development Environment
+
 1. Clone the repository
-2. Copy `.env.example` to `.env` and add your Google Translate API key
-3. Run `make up` to start all services
-4. Access the application at http://localhost
+2. Copy `.env.example` to `.env` and update values:
+   ```bash
+   cp .env.example .env
+   # Edit .env to set your passwords and API keys
+   ```
+3. Start the development environment:
+   ```bash
+   docker compose up -d
+   # Or use: make up
+   ```
+4. Access the app at:
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:3000
+
+### Production Environment
+
+Production deployment is automated via GitHub Actions. When you push to the `main` branch:
+
+1. Docker images are built and pushed to GitHub Container Registry
+2. The application is deployed to your VPS automatically
+3. Environment variables are securely managed through GitHub Secrets
+
+See [DEPLOY.md](DEPLOY.md) for detailed production setup instructions.
 
 ## Development
 
@@ -38,11 +60,14 @@ A multi-language community platform with news feed and calendar, featuring full 
 
 ### Environment Variables
 
-See `.env` file for required configuration:
+Copy `.env.example` to `.env` and configure:
 
 - `GOOGLE_TRANSLATE_API_KEY` - Your Google Translate API key
 - `ADMIN_PASSWORD` - Admin panel password
-- Database and Redis connection settings
+- `POSTGRES_USER/PASSWORD/DB` - Database credentials (defaults provided for dev)
+- Other settings have sensible defaults for development
+
+**Note**: The development `docker-compose.yml` uses these `.env` values. Production uses GitHub Secrets.
 
 ### Available Commands
 

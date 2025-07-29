@@ -33,10 +33,10 @@ const AdminLogin: React.FC = () => {
   return (
     <div className="max-w-md mx-auto mt-16">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h1 className="text-2xl font-bold mb-6 text-center">{t('admin.login')}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center pb-4 border-b-2 border-gray-200" style={{ fontFamily: 'var(--font-serif)' }}>{t('admin.login')}</h1>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 border border-red-600 text-red-700 px-4 py-3 mb-4 font-medium rounded-lg">
             {error}
           </div>
         )}
@@ -51,7 +51,7 @@ const AdminLogin: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:outline-none bg-white transition-colors"
               autoFocus
             />
           </div>
@@ -59,7 +59,7 @@ const AdminLogin: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn btn-primary"
           >
             {loading ? t('common.loading') : t('admin.login_button')}
           </button>

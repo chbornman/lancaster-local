@@ -27,22 +27,22 @@ const NewsFeed: React.FC = () => {
         setLoadingMore(true);
       }
       setError(null);
-      
-      const response = await endpoints.getPosts({ 
-        lang: i18n.language, 
-        page: pageNum, 
-        limit: 10 
+
+      const response = await endpoints.getPosts({
+        lang: i18n.language,
+        page: pageNum,
+        limit: 10
       });
-      
+
       const newPosts = response.data.posts;
       const pagination = response.data.pagination;
-      
+
       if (isInitial) {
         setPosts(newPosts);
       } else {
         setPosts(prev => [...prev, ...newPosts]);
       }
-      
+
       setHasMore(pageNum < pagination.total_pages);
       setPage(pageNum + 1);
     } catch (err) {
@@ -83,22 +83,22 @@ const NewsFeed: React.FC = () => {
   useEffect(() => {
     let startY = 0;
     let pullDistance = 0;
-    
+
     const handleTouchStart = (e: TouchEvent) => {
       if (window.scrollY === 0) {
         startY = e.touches[0].clientY;
       }
     };
-    
+
     const handleTouchMove = (e: TouchEvent) => {
       if (startY === 0) return;
-      
+
       pullDistance = e.touches[0].clientY - startY;
       if (pullDistance > 0 && window.scrollY === 0) {
         e.preventDefault();
       }
     };
-    
+
     const handleTouchEnd = () => {
       if (pullDistance > 100 && window.scrollY === 0) {
         void handleRefresh();
@@ -106,12 +106,12 @@ const NewsFeed: React.FC = () => {
       startY = 0;
       pullDistance = 0;
     };
-    
+
     if ('ontouchstart' in window) {
       document.addEventListener('touchstart', handleTouchStart, { passive: true });
       document.addEventListener('touchmove', handleTouchMove, { passive: false });
       document.addEventListener('touchend', handleTouchEnd);
-      
+
       return () => {
         document.removeEventListener('touchstart', handleTouchStart);
         document.removeEventListener('touchmove', handleTouchMove);
@@ -123,11 +123,16 @@ const NewsFeed: React.FC = () => {
   if (loading && posts.length === 0) {
     return (
       <div className="max-w-4xl mx-auto">
-        <div className="flex flex-row-reverse justify-between items-center mb-8 pb-4 border-b-2 border-[#1A1A1A]">
-          <h1 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'var(--font-serif)' }}>{t('posts.title')}</h1>
-          <Link to="/submit/post" className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium hidden sm:inline-flex shadow-sm hover:shadow-md" style={{ fontFamily: 'var(--font-sans)' }}>
-            {t('posts.submit')}
-          </Link>
+        <div className="mb-8">
+          <div className="text-center mb-4">
+            <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: 'var(--font-serif)' }}>{t('posts.title')}</h1>
+          </div>
+          <div className="flex justify-center">
+            <Link to="/submit/post" className="btn btn-primary btn-md">
+              {t('posts.submit')}
+            </Link>
+          </div>
+          <div className="border-t-4 border-double border-neutral-800 mt-6"></div>
         </div>
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -141,11 +146,10 @@ const NewsFeed: React.FC = () => {
   if (error && posts.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-[#8B4513] mb-4 font-medium">{t('common.error')}: {error}</p>
-        <button 
+        <p className="text-red-600 mb-4 font-medium">{t('common.error')}: {error}</p>
+        <button
           onClick={() => fetchPosts(1, true)}
-          className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium shadow-sm hover:shadow-md"
-          style={{ fontFamily: 'var(--font-sans)' }}
+          className="btn btn-primary btn-md"
         >
           {t('common.retry')}
         </button>
@@ -155,26 +159,31 @@ const NewsFeed: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex flex-row-reverse justify-between items-center mb-8 pb-4 border-b-2 border-[#1A1A1A]">
-        <h1 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'var(--font-serif)' }}>{t('posts.title')}</h1>
-        <Link to="/submit/post" className="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium text-sm sm:text-base shadow-sm hover:shadow-md" style={{ fontFamily: 'var(--font-sans)' }}>
-          <span className="hidden sm:inline">{t('posts.submit')}</span>
-          <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-        </Link>
+      <div className="mb-8">
+        <div className="text-center mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: 'var(--font-serif)' }}>{t('posts.title')}</h1>
+        </div>
+        <div className="flex justify-center">
+          <Link to="/submit/post" className="btn btn-primary btn-md">
+            <span className="hidden sm:inline">{t('posts.submit')}</span>
+            <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </Link>
+        </div>
+        <div className="border-t-4 border-double border-neutral-800 mt-6"></div>
       </div>
 
       {refreshing && (
         <div className="flex justify-center py-4">
-          <div className="w-8 h-8 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin"></div>
+          <div className="spinner"></div>
         </div>
       )}
 
       {posts.length === 0 && !loading ? (
         <div className="text-center py-12">
-          <p className="text-[#4A4A4A] mb-4 text-lg" style={{ fontFamily: 'var(--font-body)' }}>{t('posts.no_posts')}</p>
-          <Link to="/submit/post" className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium shadow-sm hover:shadow-md" style={{ fontFamily: 'var(--font-sans)' }}>
+          <p className="text-neutral-600 mb-4 text-lg" style={{ fontFamily: 'var(--font-body)' }}>{t('posts.no_posts')}</p>
+          <Link to="/submit/post" className="btn btn-primary btn-md">
             {t('posts.submit')}
           </Link>
         </div>
@@ -188,7 +197,7 @@ const NewsFeed: React.FC = () => {
               <PostCard post={post} />
             </div>
           ))}
-          
+
           {loadingMore && (
             <div className="space-y-4">
               {Array.from({ length: 2 }).map((_, i) => (
@@ -196,9 +205,9 @@ const NewsFeed: React.FC = () => {
               ))}
             </div>
           )}
-          
+
           {!hasMore && posts.length > 0 && (
-            <div className="text-center py-8 text-[#4A4A4A]">
+            <div className="text-center py-8 text-neutral-600">
               <p className="text-sm uppercase tracking-wide" style={{ fontFamily: 'var(--font-sans)' }}>{t('posts.no_more_posts')}</p>
             </div>
           )}

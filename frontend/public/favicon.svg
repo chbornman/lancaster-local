@@ -1,0 +1,31 @@
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Heritage shield/crest design -->
+  <g>
+    <!-- Shield shape -->
+    <path
+      d="M32 8 L48 16 L48 32 Q48 48, 32 56 Q16 48, 16 32 L16 16 Z"
+      fill="#1f2937"
+      stroke="#1f2937"
+      strokeWidth="1"
+    />
+    
+    <!-- Inner shield -->
+    <path
+      d="M32 12 L44 18 L44 32 Q44 44, 32 50 Q20 44, 20 32 L20 18 Z"
+      fill="#f3f4f6"
+    />
+    
+    <!-- Decorative L -->
+    <path
+      d="M26 22 L26 38 L38 38 L38 34 L30 34 L30 22 Z"
+      fill="#1f2937"
+    />
+    
+    <!-- Small star accent -->
+    <path
+      d="M32 42 L33.5 45 L36.5 45 L34 47 L35 50 L32 48 L29 50 L30 47 L27.5 45 L30.5 45 Z"
+      fill="#1f2937"
+      transform="scale(0.6) translate(20, 20)"
+    />
+  </g>
+</svg>

@@ -16,7 +16,8 @@
   },
   "events": {
     "title": "Calendrier Communautaire",
-    "submit": "Soumettre un Événement"
+    "submit": "Soumettre un Événement",
+    "events_on": "Événements du"
   },
   "common": {
     "loading": "Chargement...",

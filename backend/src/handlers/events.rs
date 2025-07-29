@@ -39,7 +39,6 @@ pub async fn get_events(
             e.location,
             e.category,
             e.is_free,
-            e.ticket_price,
             e.ticket_url,
             e.original_language,
             e.text_direction as original_text_direction,
@@ -116,10 +115,10 @@ pub async fn create_event(
         INSERT INTO events (
             organizer_name, organizer_email, title, description,
             event_date, event_time, location, category,
-            is_free, ticket_price, ticket_url,
+            is_free, ticket_url,
             original_language, text_direction
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING *
         "#,
     )
@@ -132,7 +131,6 @@ pub async fn create_event(
     .bind(&payload.location)
     .bind(&payload.category)
     .bind(payload.is_free)
-    .bind(payload.ticket_price)
     .bind(&payload.ticket_url)
     .bind(&language)
     .bind(&text_direction)
