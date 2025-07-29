@@ -89,6 +89,7 @@ jobs:
           # Pull latest images
           docker pull ghcr.io/chbornman/lancaster-local-backend:main
           docker pull ghcr.io/chbornman/lancaster-local-frontend:main
+          docker pull migrate/migrate:latest
           
           # Stop existing containers
           docker compose -f docker-compose.prod.yml down
