@@ -1,42 +1,78 @@
 use chrono::{Utc, NaiveTime, Duration};
 use sqlx::postgres::PgPoolOptions;
 use rand::Rng;
+use std::time::Instant;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let start_time = Instant::now();
     dotenv::dotenv().ok();
     
     println!("🌱 Starting Lancaster Community Platform seed script...");
+    println!("⏰ Started at: {}", Utc::now().format("%Y-%m-%d %H:%M:%S UTC"));
     
     // Database connection
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    println!("📍 Connecting to database: {}", database_url.split('@').last().unwrap_or("unknown"));
+    
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
-        .await?;
+        .await
+        .map_err(|e| {
+            eprintln!("❌ Failed to connect to database: {}", e);
+            e
+        })?;
     
-    println!("✅ Connected to database");
+    println!("✅ Connected to database successfully");
     
     // Clear existing data
-    println!("🧹 Clearing existing data...");
-    sqlx::query("DELETE FROM event_translations").execute(&pool).await?;
-    sqlx::query("DELETE FROM post_translations").execute(&pool).await?;
-    sqlx::query("DELETE FROM events").execute(&pool).await?;
-    sqlx::query("DELETE FROM posts").execute(&pool).await?;
+    println!("\n🧹 Clearing existing data...");
+    
+    let event_trans_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM event_translations").fetch_one(&pool).await?;
+    let post_trans_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM post_translations").fetch_one(&pool).await?;
+    let events_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM events").fetch_one(&pool).await?;
+    let posts_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM posts").fetch_one(&pool).await?;
+    
+    if event_trans_count.0 > 0 || post_trans_count.0 > 0 || events_count.0 > 0 || posts_count.0 > 0 {
+        println!("  Found existing data:");
+        if event_trans_count.0 > 0 { println!("    - {} event translations", event_trans_count.0); }
+        if post_trans_count.0 > 0 { println!("    - {} post translations", post_trans_count.0); }
+        if events_count.0 > 0 { println!("    - {} events", events_count.0); }
+        if posts_count.0 > 0 { println!("    - {} posts", posts_count.0); }
+        
+        println!("  Deleting all existing data...");
+        sqlx::query("DELETE FROM event_translations").execute(&pool).await?;
+        sqlx::query("DELETE FROM post_translations").execute(&pool).await?;
+        sqlx::query("DELETE FROM events").execute(&pool).await?;
+        sqlx::query("DELETE FROM posts").execute(&pool).await?;
+        println!("  ✓ All existing data cleared");
+    } else {
+        println!("  No existing data found");
+    }
     
     // Seed supported languages if not exists
-    println!("🌍 Ensuring languages are configured...");
+    println!("\n🌍 Ensuring languages are configured...");
+    let lang_start = Instant::now();
     seed_languages(&pool).await?;
+    println!("  ⏱️  Languages configured in {:.2}s", lang_start.elapsed().as_secs_f64());
     
     // Seed posts
-    println!("📝 Creating posts...");
+    println!("\n📝 Creating posts...");
+    let posts_start = Instant::now();
     seed_posts(&pool).await?;
+    println!("  ⏱️  Posts created in {:.2}s", posts_start.elapsed().as_secs_f64());
     
     // Seed events  
-    println!("📅 Creating events...");
+    println!("\n📅 Creating events...");
+    let events_start = Instant::now();
     seed_events(&pool).await?;
+    println!("  ⏱️  Events created in {:.2}s", events_start.elapsed().as_secs_f64());
     
-    println!("✨ Seed completed successfully!");
+    let elapsed = start_time.elapsed();
+    println!("\n✨ Seed completed successfully!");
+    println!("⏱️  Total time: {:.2}s", elapsed.as_secs_f64());
+    println!("🏁 Finished at: {}", Utc::now().format("%Y-%m-%d %H:%M:%S UTC"));
     
     Ok(())
 }
@@ -48,6 +84,7 @@ async fn seed_languages(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::E
         .await?;
     
     if count.0 == 0 {
+        println!("  No languages found, inserting default languages...");
         // Insert default languages
         sqlx::query(r#"
             INSERT INTO supported_languages (code, name, native_name, is_rtl, text_direction, enabled)
@@ -64,6 +101,9 @@ async fn seed_languages(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::E
         "#)
         .execute(pool)
         .await?;
+        println!("  ✓ Inserted 9 default languages");
+    } else {
+        println!("  ✓ Languages already configured ({} languages found)", count.0);
     }
     
     Ok(())
@@ -71,6 +111,8 @@ async fn seed_languages(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::E
 
 async fn seed_posts(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Error>> {
     let mut rng = rand::thread_rng();
+    let mut posts_created = 0;
+    let mut translations_created = 0;
     
     // Posts with different original languages
     struct PostData {
@@ -259,8 +301,10 @@ async fn seed_posts(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Error
         },
     ];
     
+    println!("  Processing {} posts...", posts.len());
+    
     // Insert posts and translations
-    for post in posts {
+    for (idx, post) in posts.iter().enumerate() {
         // Random time in the past 30 days
         let days_ago = rng.gen_range(0..30);
         let hours_ago = rng.gen_range(0..24);
@@ -295,6 +339,12 @@ async fn seed_posts(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Error
         .bind(created_at)
         .fetch_one(pool)
         .await?;
+        
+        posts_created += 1;
+        
+        if (idx + 1) % 5 == 0 {
+            println!("    Processed {}/{} posts...", idx + 1, posts.len());
+        }
         
         // Add translations for published posts
         if post.published {
@@ -582,6 +632,8 @@ async fn seed_posts(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Error
                 .bind(direction)
                 .execute(pool)
                 .await?;
+                
+                translations_created += 1;
             }
         }
     }
@@ -589,15 +641,20 @@ async fn seed_posts(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Error
     let post_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM posts").fetch_one(pool).await?;
     let published_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM posts WHERE published = true").fetch_one(pool).await?;
     let unpublished_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM posts WHERE published = false").fetch_one(pool).await?;
+    let trans_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM post_translations").fetch_one(pool).await?;
     
     println!("  ✓ Created {} posts ({} published, {} awaiting review)", 
         post_count.0, published_count.0, unpublished_count.0);
+    println!("  ✓ Created {} post translations (avg {:.1} per published post)", 
+        trans_count.0, trans_count.0 as f64 / published_count.0 as f64);
     
     Ok(())
 }
 
 async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Error>> {
     let mut rng = rand::thread_rng();
+    let mut events_created = 0;
+    let mut translations_created = 0;
     
     // Lancaster-themed events
     let events_data = vec![
@@ -675,7 +732,9 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
         ),
     ];
     
-    for (organizer_name, organizer_email, title, description, days_from_now, event_time, location, category, is_free, ticket_price, ticket_url, published) in events_data {
+    println!("  Processing {} events...", events_data.len());
+    
+    for (idx, (organizer_name, organizer_email, title, description, days_from_now, event_time, location, category, is_free, ticket_price, ticket_url, published)) in events_data.into_iter().enumerate() {
         let event_date = (Utc::now() + Duration::days(days_from_now)).date_naive();
         let event_time = event_time.map(|t| NaiveTime::parse_from_str(t, "%H:%M").unwrap());
         
@@ -714,6 +773,8 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
         .bind(created_at)
         .fetch_one(pool)
         .await?;
+        
+        events_created += 1;
         
         // Add simulated translations for published events
         if published {
@@ -821,6 +882,8 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
                 .bind(direction)
                 .execute(pool)
                 .await?;
+                
+                translations_created += 1;
             }
         }
     }
@@ -828,9 +891,12 @@ async fn seed_events(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::Erro
     let event_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM events").fetch_one(pool).await?;
     let published_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM events WHERE published = true").fetch_one(pool).await?;
     let unpublished_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM events WHERE published = false").fetch_one(pool).await?;
+    let trans_count: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM event_translations").fetch_one(pool).await?;
     
     println!("  ✓ Created {} events ({} published, {} awaiting review)", 
         event_count.0, published_count.0, unpublished_count.0);
+    println!("  ✓ Created {} event translations (avg {:.1} per published event)", 
+        trans_count.0, trans_count.0 as f64 / published_count.0 as f64);
     
     Ok(())
 }
