@@ -12,6 +12,16 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Accept build arguments with defaults
+ARG VITE_API_URL=/api
+ARG VITE_DEFAULT_LANGUAGE=en
+ARG VITE_RTL_LANGUAGES=ar,he,fa,ur
+
+# Set environment variables from build arguments
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_DEFAULT_LANGUAGE=$VITE_DEFAULT_LANGUAGE
+ENV VITE_RTL_LANGUAGES=$VITE_RTL_LANGUAGES
+
 # Build for production
 RUN npm run build
 

@@ -51,10 +51,8 @@ services:
 
   frontend:
     image: ghcr.io/chbornman/lancaster-local-frontend:main
-    environment:
-      VITE_API_URL: /api
-      VITE_DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
-      VITE_RTL_LANGUAGES: ${RTL_LANGUAGES}
+    env_file:
+      - .env.production
     ports:
       - "3011:80"
     networks:

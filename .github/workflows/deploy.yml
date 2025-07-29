@@ -64,6 +64,10 @@ jobs:
         labels: ${{ steps.meta-frontend.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          VITE_API_URL=/api
+          VITE_DEFAULT_LANGUAGE=en
+          VITE_RTL_LANGUAGES=ar,he,fa,ur
 
   deploy:
     needs: build
@@ -82,6 +86,28 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
           cd ${{ secrets.VPS_APP_PATH }}
+          
+          # Create .env file from secrets
+          cat > .env << EOF
+          # Google Translate API
+          GOOGLE_TRANSLATE_API_KEY=${{ secrets.GOOGLE_TRANSLATE_API_KEY }}
+          
+          # Admin credentials
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          
+          # Database
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          
+          # Application settings
+          DEFAULT_LANGUAGE=en
+          SUPPORTED_LANGUAGES=en,es,de,fr,zh,ar,he,fa,ur
+          RTL_LANGUAGES=ar,he,fa,ur
+          
+          # Production settings
+          DOMAIN=${{ secrets.DOMAIN }}
+          EOF
           
           # Login to GitHub Container Registry
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
