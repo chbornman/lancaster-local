@@ -5,6 +5,7 @@ use axum::{
 use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
+use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
@@ -78,7 +79,7 @@ async fn main() {
             CorsLayer::new()
                 .allow_origin(Any)
                 .allow_methods(Any)
-                .allow_headers(Any),
+                .allow_headers([AUTHORIZATION, CONTENT_TYPE]),
         )
         .with_state(app_state);
 

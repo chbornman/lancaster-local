@@ -62,7 +62,7 @@ const SubmitPost: React.FC = () => {
       });
       
       alert(t('posts.submit_success'));
-      navigate('/news');
+      navigate('/');
     } catch (err) {
       console.error('Failed to submit post:', err);
       setError(
@@ -77,10 +77,10 @@ const SubmitPost: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">{t('posts.submit')}</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 pb-4 border-b-2 border-[#1A1A1A]" style={{ fontFamily: 'var(--font-serif)' }}>{t('posts.submit')}</h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded mb-4 text-sm sm:text-base">
+        <div className="bg-red-50 border border-red-600 text-red-700 px-3 py-2 sm:px-4 sm:py-3 mb-4 text-sm sm:text-base font-medium">
           {error}
         </div>
       )}
@@ -96,7 +96,8 @@ const SubmitPost: React.FC = () => {
             value={formData.author_name}
             onChange={handleInputChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
+            style={{ fontFamily: 'var(--font-sans)' }}
             dir="auto"
           />
         </div>
@@ -110,7 +111,8 @@ const SubmitPost: React.FC = () => {
             name="author_email"
             value={formData.author_email}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
+            style={{ fontFamily: 'var(--font-sans)' }}
             dir="ltr"
           />
         </div>
@@ -125,10 +127,10 @@ const SubmitPost: React.FC = () => {
             value={formData.title}
             onChange={handleInputChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
             dir={textDirection}
             style={{
-              fontFamily: textDirection === 'rtl' ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'Inter, -apple-system, sans-serif',
+              fontFamily: textDirection === 'rtl' ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'var(--font-body)',
               textAlign: textDirection === 'rtl' ? 'right' : 'left'
             }}
           />
@@ -143,10 +145,10 @@ const SubmitPost: React.FC = () => {
             value={formData.content}
             onChange={handleInputChange}
             rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
             dir={textDirection}
             style={{
-              fontFamily: textDirection === 'rtl' ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'Inter, -apple-system, sans-serif',
+              fontFamily: textDirection === 'rtl' ? 'Noto Sans Arabic, Tahoma, Arial, sans-serif' : 'var(--font-body)',
               textAlign: textDirection === 'rtl' ? 'right' : 'left',
               lineHeight: textDirection === 'rtl' ? '1.8' : '1.6'
             }}
@@ -161,7 +163,7 @@ const SubmitPost: React.FC = () => {
             name="post_type"
             value={formData.post_type}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
           >
             <option value="text">{t('posts.types.text')}</option>
             <option value="link">{t('posts.types.link')}</option>
@@ -178,7 +180,8 @@ const SubmitPost: React.FC = () => {
             name="link_url"
             value={formData.link_url}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
+            style={{ fontFamily: 'var(--font-sans)' }}
             dir="ltr"
           />
         </div>
@@ -192,7 +195,8 @@ const SubmitPost: React.FC = () => {
             name="image_url"
             value={formData.image_url}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-[#1A1A1A] focus:ring-2 focus:ring-[#8B4513]/20 focus:border-[#8B4513] focus:outline-none bg-white"
+            style={{ fontFamily: 'var(--font-sans)' }}
             dir="ltr"
           />
         </div>
@@ -201,14 +205,16 @@ const SubmitPost: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex-1 order-2 sm:order-1"
+            className="px-4 py-2 bg-[#8B4513] text-white hover:bg-[#6B3410] transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex-1 order-2 sm:order-1 shadow-sm hover:shadow-md"
+            style={{ fontFamily: 'var(--font-sans)' }}
           >
             {loading ? t('common.loading') : t('common.submit')}
           </button>
           <button
             type="button"
-            onClick={() => navigate('/news')}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors font-medium order-1 sm:order-2"
+            onClick={() => navigate('/')}
+            className="px-4 py-2 bg-white text-[#1A1A1A] border border-[#1A1A1A] hover:bg-gray-50 transition-all font-medium order-1 sm:order-2"
+            style={{ fontFamily: 'var(--font-sans)' }}
           >
             {t('common.cancel')}
           </button>
