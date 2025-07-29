@@ -67,7 +67,8 @@ CREATE TABLE events (
     original_language VARCHAR(10) DEFAULT 'en',
     text_direction VARCHAR(10) DEFAULT 'ltr',
     published BOOLEAN DEFAULT false,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Event translations table with RTL info
