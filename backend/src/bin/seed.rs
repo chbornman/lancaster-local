@@ -9,6 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv::dotenv().ok();
     
     println!("🌱 Starting Lancaster Community Platform seed script...");
+    println!("📅 Version: {}", env!("CARGO_PKG_VERSION"));
     println!("⏰ Started at: {}", Utc::now().format("%Y-%m-%d %H:%M:%S UTC"));
     
     // Database connection
