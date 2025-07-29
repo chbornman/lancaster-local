@@ -84,8 +84,10 @@ services:
     networks:
       - internal
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     command: "/app/seed"
     restart: "no"
 
