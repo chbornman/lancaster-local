@@ -6,7 +6,7 @@ CREATE TABLE supported_languages (
     is_rtl BOOLEAN DEFAULT false,
     text_direction VARCHAR(10) DEFAULT 'ltr',
     enabled BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Insert default supported languages with RTL info
@@ -34,8 +34,8 @@ CREATE TABLE posts (
     original_language VARCHAR(10) DEFAULT 'en',
     text_direction VARCHAR(10) DEFAULT 'ltr',
     published BOOLEAN DEFAULT false,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Post translations table with RTL info
@@ -46,7 +46,7 @@ CREATE TABLE post_translations (
     title VARCHAR(255) NOT NULL,
     content TEXT,
     text_direction VARCHAR(10) DEFAULT 'ltr',
-    translated_at TIMESTAMP DEFAULT NOW(),
+    translated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(post_id, language_code)
 );
 
@@ -67,8 +67,8 @@ CREATE TABLE events (
     original_language VARCHAR(10) DEFAULT 'en',
     text_direction VARCHAR(10) DEFAULT 'ltr',
     published BOOLEAN DEFAULT false,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Event translations table with RTL info
@@ -79,7 +79,7 @@ CREATE TABLE event_translations (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     text_direction VARCHAR(10) DEFAULT 'ltr',
-    translated_at TIMESTAMP DEFAULT NOW(),
+    translated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(event_id, language_code)
 );
 
@@ -87,8 +87,8 @@ CREATE TABLE event_translations (
 CREATE TABLE admin_sessions (
     id SERIAL PRIMARY KEY,
     session_token VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    expires_at TIMESTAMP NOT NULL
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL
 );
 
 -- Create indexes
