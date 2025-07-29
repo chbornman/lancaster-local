@@ -83,6 +83,9 @@ jobs:
         script: |
           cd ${{ secrets.VPS_APP_PATH }}
           
+          # Pull latest code changes (migrations, compose files, etc.)
+          git pull origin main || echo "No git repo found - manual sync needed"
+          
           # Login to GitHub Container Registry
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           
